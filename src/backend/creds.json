@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "londonbikedata",
+  "private_key_id": "f7a14ebe437003ee5e0cc073ea32479d83b1e950",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCqTb7T/rXzdEQO\nvaADSRAr2x1OqT3C4JEN9mwty5/lY3ntYGcYt7qZrgsjlJg06KY/U/16C5Y0ZVKH\n0sFT6GxCcHiyohnahs7vkSNcDHMHDKwtfYKo0f3IE7dCywlhlekjhEddF4mDKH3o\nhstvJw7Y0KE72bcTXptTwahpza7cUuSpqHY2ir4qTlkeZWbBllXAT6hR1Hu97DvW\nKNPYXlGVB/64H2b2cXN6PifJ65EBsYS4aKjPVK/kOleWc99k3mW4cETmUamtJNzw\nL90lpSamH4he9aaxApoHMar0us2o0KzGJtA5G41k8spIh6SRNlK/fuJVdRyPVO3E\nCK5r/pNVAgMBAAECggEAHRlXp+V3tXeCQXqJIsaTKssvwMcONIQmhNo8Nb77PTi4\nFqVIOGL8UVH5uUSklTXDYkK5pubf7Wf6qBaMzgeCp/+LwAoOnNY3+Zs1DX9bEDNM\nICG395yZ3lvwDkue+LuisFzjzLY+2thKWzbc/8sOsGFFi3Jx469gnvkSC7IHVMHV\n0VMb+ljRoNRH+Locvzac3uga4HVf6Aci6bgXvBxc5nNyjjKVEJK+5kxVxv22KZHo\nmjT7YJX0fFwdWX+DNE0KMu79eOsGmgY2Gk6a5rWHn3Er5nPLyRWuIAx1ht5CeZlq\noMZ1bxnFG8TH/yI7oet8/bpf+5rZ7tB1nU2lBtU7QQKBgQDR42jx1PRjLFLTwRtH\nf0CcMxi9BjF7Byhq6eNs7tOJNqAO7UneXMhcUU8OZtneHYrY/keIBnhDfw3fZ1wi\njwwV6f5jIzT/foVDrnLRrbJorXpZQRooFIsuXa0edXBpNrKgfXKnuYVKNu9LKEyL\nV3AZSfYbR/SBD4vK57swEf6fLQKBgQDPuAHafS97AYFVDvcOctxr1Z3YZjIbEE+0\njjJwjhhQ+AaGXU2Gsv69nImvXz15evEr7iAWAQYBoEdzza8ngo4sgmGYbOnsgFtJ\nUnTpsgGAugh2aBJm3HHE33T3mDbWkn3JHQOSxHaSbWMy9ElM+uFc3cAQBrdkuzdF\nkb8PgmmdyQKBgCKP+DAaiUPrgJguLHfRlKokH+bAplVEEHvKmBDQIzVtMV5D5O4h\nCT1qhkIw3Z+d7cdd2BmmNxemTHqFYr6uH6dcKO/aVFfeVcOXboDowYBLUOJxvgTr\nnR+9fUyOujwZLcEP51mHS1O1SCJwOGqZs3P2ofhMGQ9HqBV5o3F/BRbhAoGAPWVr\nDtSPszDntGd++MNUiX8Tb8INL1ir5nddS02EvHIDI7XyU00W5J6fR7nD5uNC47Q3\nwak9yD9Cv2TdT7VUJq3HARG4NtJdqRd5PRYDQbQ7ChyKy+J+si1GWmSgWN3l1gsA\nYmI1leRFPOtduyYwdI2K1nHVxS1dEfAZZBEs/JkCgYAEGqM20E9XjO9aQsZlbhby\nS30ixQAp3L5Mz4mf9OxvRfb5uTapg2VrRRRNWbcn/eXn+OPnMrOR87MEz2fpqBio\nip/NSyEHTpr61dx1tvDeHz9Ac+2WLK+KOdlLyHoyFAJtzQo7SFC2GNGcVwfC+ekx\nKmmrCQOLMBumgpUGkUlZIg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "bike-data-access@londonbikedata.iam.gserviceaccount.com",
+  "client_id": "116068701483259148830",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bike-data-access%40londonbikedata.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,5 +1,7 @@
 fastapi
 uvicorn
 google-cloud-bigquery
+google-cloud-bigquery-storage
 pandas
 python-dotenv
+db-dtypes
