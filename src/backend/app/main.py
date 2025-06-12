@@ -1,17 +1,8 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
-from pydantic import BaseModel
 from .utils import query_bike_data
 
 app = FastAPI()
-
-# Define a shape for the item using Pydantic.BaseModel
-# Think TypeScript for Python... it allows you to define the shape/structure of your data for better validation
-class Item(BaseModel):
-    name: str
-    age: int
-    diet: Optional[str] = None # Optional field with default value None
 
 # Configure CORS
 app.add_middleware(
@@ -27,9 +18,6 @@ async def get_bike_data():
     data = query_bike_data()
     return data
 
-@app.get("/test")
-def test():
-    return {"test"}
 
 @app.get("/")
 async def root():

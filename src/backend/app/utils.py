@@ -9,9 +9,10 @@ def query_bike_data():
 
     query = """
     SELECT 
-        count(*)
+        *
     FROM 
-        `bigquery-public-data.london_bicycles.cycle_hire`
+        `bigquery-public-data.london_bicycles.cycle_stations`
+    LIMIT 1
     
     """
     query_job = client.query(query)
