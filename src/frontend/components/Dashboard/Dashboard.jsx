@@ -1,4 +1,3 @@
-// import { useState } from 'react';
 import { useEffect, useState } from 'react';
 import styles from './Dashboard.module.css';
 import Calendar from 'react-calendar';
@@ -11,11 +10,11 @@ export const Dashboard = () => {
     const [MIN_DATE, SET_MIN_DATE] = useState();
     const [MAX_DATE, SET_MAX_DATE] = useState();
 
-    useEffect(() => {
-        /*
+    /*
         UTILITY CALLS - INSIDE A useEffect SO ITS ONLY CALLED ON INITIAL RENDER (technically twice because of StrictMode...)
-        */
+    */
 
+    useEffect(() => {
         // Get the minimum date and store it
         const getMinDate = async () => {
             const res = await fetch('http://localhost:8000/db/get_min_date', {
@@ -23,7 +22,8 @@ export const Dashboard = () => {
             });
 
             const resData = await res.json();
-            const rawMinDate = resData[0].f0_; // target the key of the response and save the value in rawMinDate
+            const rawMinDate = resData[0].min_date; // target the key of the response and save the value in rawMinDate
+            console.log(rawMinDate);
             SET_MIN_DATE(new Date(rawMinDate).toISOString().split('T')[0]);
         };
 
@@ -34,7 +34,7 @@ export const Dashboard = () => {
             });
 
             const resData = await res.json();
-            const rawMaxDate = resData[0].f0_;
+            const rawMaxDate = resData[0].max_date;
             const MAX_DATE = new Date(rawMaxDate).toISOString().split('T')[0];
             SET_MAX_DATE(MAX_DATE);
         };
@@ -67,9 +67,11 @@ export const Dashboard = () => {
                 <div className={`${styles.filtersBox} ${styles.widget}`}>
                     <h4>Filters 🔍</h4>
                     <p>Starting Date</p>
-                    <Calendar />
+                    <Calendar styles />
                     <p>Ending Date</p>
-                    <Calendar />
+                    <div className={styles.calendar}>
+                        <Calendar />
+                    </div>
                     <p>Choose a borough (Default: All London)</p>
                     <p>CUSTOM DROPDOWN</p>
                 </div>

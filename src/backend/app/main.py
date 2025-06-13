@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 from .utils import *
 
 app = FastAPI()
@@ -7,10 +8,10 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Allows all origins, adjust as needed
+    allow_origins=["http://localhost:5173"],  # Allows FastAPI to talk to React over localhost
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods, adjust as needed
-    allow_headers=["*"],  # Allows all headers, adjust as needed
+    allow_methods=["*"],  
+    allow_headers=["*"],  
 )
 
 # Define the endpoints, and the queries (functions) that are run when they're hit
@@ -44,6 +45,21 @@ async def min_date():
 async def max_date():
     data = get_max_date()
     return data
+
+
+"""
+DATA ENDPOINTS
+"""
+@app.get("/get_top_borough")
+async def top_borough(start_date: str = Query(...), end_date: str = Query(...)):
+    data = get_top_borough(start_date, end_date)
+    return data
+
+@app.get("/get_stations")
+async def get_stations():
+    data = get_station_ids_locations()
+    return data
+
 
 
 
