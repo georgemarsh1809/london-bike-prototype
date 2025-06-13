@@ -13,6 +13,8 @@ dist-ssr
 *.local
 src/backend/creds.json
 src/backend/.venv/
+InitUIDesign.pdf
+
 
 # Editor directories and files
 .vscode/*

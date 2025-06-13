@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import styles from './Dashboard.module.css';
 import Calendar from 'react-calendar';
-// import 'react-calendar/dist/Calendar.css';
+import styles from './Dashboard.module.css';
+import 'react-calendar/dist/Calendar.css';
 
 export const Dashboard = () => {
     // const [startingMonth, setStartingMonth] = useState('January');
@@ -64,16 +64,16 @@ export const Dashboard = () => {
                 <div className={`${styles.boroughChart} ${styles.widget}`}>
                     <h4>Top Boroughs 📊</h4>
                 </div>
-                <div className={`${styles.filtersBox} ${styles.widget}`}>
+                <div className={`${styles.filtersBox} `}>
                     <h4>Filters 🔍</h4>
                     <p>Starting Date</p>
-                    <Calendar styles />
+                    <div className={styles.calendar}>
+                        <Calendar minDetail="year" />
+                    </div>
                     <p>Ending Date</p>
                     <div className={styles.calendar}>
-                        <Calendar />
+                        <Calendar minDetail="year" />
                     </div>
-                    <p>Choose a borough (Default: All London)</p>
-                    <p>CUSTOM DROPDOWN</p>
                 </div>
             </div>
         </>

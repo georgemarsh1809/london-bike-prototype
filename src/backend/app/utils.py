@@ -32,11 +32,8 @@ def test_stations_table():
     LIMIT 1
     """
     
-    # Run the query on the client connection
     query_job = client.query(query)
 
-    # Convert the response to JSON with .to_dataframe()    
-    # Return the JSON as the response to the call
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
@@ -44,11 +41,6 @@ def test_stations_table():
 """
     UTILITY FUNCTIONS
 """
-def get_station_location():
-    # get longitude and latitude of each station
-    # use geopy.geocoders to convert coords of each station to its relevant borough, and save it in another JSON for reference
-    return None
-
 
 def get_min_date():
     query = """
@@ -57,11 +49,8 @@ def get_min_date():
     FROM `bigquery-public-data.london_bicycles.cycle_hire` 
     """
     
-    # Run the query on the client connection
     query_job = client.query(query)
 
-    # Convert the response to JSON with .to_dataframe()    
-    # Return the JSON as the response to the call
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
@@ -73,11 +62,8 @@ def get_max_date():
     FROM `bigquery-public-data.london_bicycles.cycle_hire` 
     """
     
-    # Run the query on the client connection
     query_job = client.query(query)
 
-    # Convert the response to JSON with .to_dataframe()    
-    # Return the JSON as the response to the call
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
@@ -106,14 +92,11 @@ def get_top_borough(start_date: str, end_date: str):
         *
     FROM `bigquery-public-data.london_bicycles.cycle_hire` 
     WHERE start_date BETWEEN {start_date} AND {end_date} 
-        LIMIT 10
+        LIMIT 1
     """
     
-    # Run the query on the client connection
     query_job = client.query(query)
 
-    # Convert the response to JSON with .to_dataframe()    
-    # Return the JSON as the response to the call
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 

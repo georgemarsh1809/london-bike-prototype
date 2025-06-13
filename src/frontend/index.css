@@ -68,3 +68,11 @@ button:focus-visible {
         background-color: #f9f9f9;
     }
 }
+
+/* :global(.react-calendar__month-view__weekdays) {
+    display: none;
+}
+
+:global(.react-calendar__month-view__days) {
+    margin-top: 0;
+} */
