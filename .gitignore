@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-backend/creds.json
+src/backend/creds.json
 src/backend/.venv/
 
 # Editor directories and files
