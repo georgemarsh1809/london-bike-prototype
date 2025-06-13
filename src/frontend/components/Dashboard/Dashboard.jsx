@@ -1,6 +1,8 @@
 // import { useState } from 'react';
 import { useEffect, useState } from 'react';
 import styles from './Dashboard.module.css';
+import Calendar from 'react-calendar';
+// import 'react-calendar/dist/Calendar.css';
 
 export const Dashboard = () => {
     // const [startingMonth, setStartingMonth] = useState('January');
@@ -11,7 +13,7 @@ export const Dashboard = () => {
 
     useEffect(() => {
         /*
-        UTILITY CALLS - INSIDE A useEffect SO ITS ONLY CALLED ON INITIAL RENDER
+        UTILITY CALLS - INSIDE A useEffect SO ITS ONLY CALLED ON INITIAL RENDER (technically twice because of StrictMode...)
         */
 
         // Get the minimum date and store it
@@ -21,7 +23,7 @@ export const Dashboard = () => {
             });
 
             const resData = await res.json();
-            const rawMinDate = resData[0].f0_;
+            const rawMinDate = resData[0].f0_; // target the key of the response and save the value in rawMinDate
             SET_MIN_DATE(new Date(rawMinDate).toISOString().split('T')[0]);
         };
 
@@ -65,11 +67,11 @@ export const Dashboard = () => {
                 <div className={`${styles.filtersBox} ${styles.widget}`}>
                     <h4>Filters 🔍</h4>
                     <p>Starting Date</p>
-                    <p>DROP DOWN</p>
+                    <Calendar />
                     <p>Ending Date</p>
-                    <p>DROP DOWN</p>
+                    <Calendar />
                     <p>Choose a borough (Default: All London)</p>
-                    <p></p>
+                    <p>CUSTOM DROPDOWN</p>
                 </div>
             </div>
         </>
