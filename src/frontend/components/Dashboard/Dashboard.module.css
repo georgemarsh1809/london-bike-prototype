@@ -1,0 +1,52 @@
+.dashboard-container {
+    display: grid;
+    box-sizing: border-box; /*Ensures padding on the grid goes on the inside no overflow on the x-axis*/
+    grid-template-columns: 3fr 3fr 1fr; /* 3 content columns + 1 narrow filter column */
+    grid-template-rows: repeat(
+        6,
+        7.4em
+    ); /* 5 equal-height rows (adjust if needed) */
+    gap: 1rem;
+    padding: 1rem;
+    width: 100%;
+    height: 100dvh;
+    background-color: #cbe3c4;
+    border-top: solid 2px rgb(184, 184, 184);
+}
+
+.widget {
+    background: #557751;
+    border-radius: 10px;
+    padding: 0.5rem;
+    color: white;
+}
+.top-borough {
+    grid-column: 1 / span 1;
+    grid-row: 1;
+}
+.hot-spot-map {
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 3;
+}
+.carbon-calculator {
+    grid-column: 1 / span 1;
+    grid-row: 5 / span 2;
+}
+.usage-chart {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+}
+.borough-chart {
+    grid-column: 2;
+    grid-row: 4 / span 3;
+}
+.filters-box {
+    grid-column: 3;
+    grid-row: 1 / span 6;
+    background-color: #cbe3c4;
+    border-left: solid 1px grey;
+    border-radius: 0;
+    padding-left: 1rem;
+
+    color: #557751;
+}
