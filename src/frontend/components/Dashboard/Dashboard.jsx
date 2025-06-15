@@ -1,59 +1,93 @@
 import { useEffect, useState } from 'react';
-import Calendar from 'react-calendar';
+import { useStore } from '../../stateManagement/store';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styles from './Dashboard.module.css';
-import 'react-calendar/dist/Calendar.css';
+import dayjs from 'dayjs';
+
+import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
+import stationDetails from '../../../backend/app/utils/_station_details.json';
 
 export const Dashboard = () => {
-    // const [startingMonth, setStartingMonth] = useState('January');
-    // const [endingMonth, setSEndingMonth] = useState('December');
+    const { startingDate, setStartingDate, endingDate, setEndingDate } =
+        useStore();
 
-    const [MIN_DATE, SET_MIN_DATE] = useState();
-    const [MAX_DATE, SET_MAX_DATE] = useState();
+    const [tempStartingDate, setTempStartingDate] = useState('');
+    const [tempEndingDate, setTempEndingDate] = useState('');
 
-    /*
-        UTILITY CALLS - INSIDE A useEffect SO ITS ONLY CALLED ON INITIAL RENDER (technically twice because of StrictMode...)
-    */
+    const [topBorough, setTopBorough] = useState('');
 
     useEffect(() => {
-        // Get the minimum date and store it
-        const getMinDate = async () => {
-            const res = await fetch('http://localhost:8000/db/get_min_date', {
-                method: 'GET',
-            });
+        const getTopBorough = async () => {
+            // API Call
+            const res = await fetch(
+                'http://localhost:8000/get_top_100_stations?' +
+                    new URLSearchParams({
+                        start_date: startingDate.toString(),
+                        end_date: endingDate.toString(),
+                    }).toString(),
+                { method: 'GET' }
+            );
 
             const resData = await res.json();
-            const rawMinDate = resData[0].min_date; // target the key of the response and save the value in rawMinDate
-            console.log(rawMinDate);
-            SET_MIN_DATE(new Date(rawMinDate).toISOString().split('T')[0]);
-        };
+            console.log('Res', resData);
 
-        // Get the minimum date and store it
-        const getMaxDate = async () => {
-            const res = await fetch('http://localhost:8000/db/get_max_date', {
-                method: 'GET',
+            // Find the busiest borough
+            const stationToBorough = {};
+            stationDetails.forEach(({ name, borough }) => {
+                stationToBorough[name.trim().toLowerCase()] = borough;
             });
 
-            const resData = await res.json();
-            const rawMaxDate = resData[0].max_date;
-            const MAX_DATE = new Date(rawMaxDate).toISOString().split('T')[0];
-            SET_MAX_DATE(MAX_DATE);
+            const boroughRides = {};
+
+            resData.forEach(({ station_name, total_rides }) => {
+                const name = station_name.trim().toLowerCase();
+                const borough = stationToBorough[name];
+
+                if (borough) {
+                    boroughRides[borough] =
+                        (boroughRides[borough] || 0) + total_rides;
+                } else {
+                    console.warn(
+                        `Station not found in details: ${station_name}`
+                    );
+                }
+            });
+
+            console.log(boroughRides);
+
+            // Find the busiest borough
+            const busiestBorough = Object.entries(boroughRides).reduce(
+                (max, [borough, rides]) => {
+                    // if (borough.toLowerCase() === 'unknown') return max; // skip unknown
+                    return rides > max.rides ? { borough, rides } : max;
+                },
+                { borough: null, rides: 0 }
+            );
+
+            console.log(
+                'Busiest borough:',
+                busiestBorough.borough,
+                busiestBorough.rides
+            );
+            setTopBorough(busiestBorough.borough);
         };
 
-        getMinDate();
-        getMaxDate();
-    }, []);
+        getTopBorough();
+    }, [startingDate, endingDate]);
 
     return (
         <>
             <div className={styles.dashboardContainer}>
-                <div className={`${styles.topBorough} ${styles.widget}`}>
-                    <h4>Most Sustainable Borough 🏆</h4>
-                    <p>
-                        Min Date: {MIN_DATE}, Max Date: {MAX_DATE}
-                    </p>
+                <div className={`${styles.topBorough} ${styles.widget} `}>
+                    <h4>Most Popular Borough 🏆</h4>
+                    <p className={styles.topBoroughOutput}>{topBorough}</p>
                 </div>
                 <div className={`${styles.hotSpotMap} ${styles.widget}`}>
                     <h4>Hot Spots 🔥</h4>
+                    <p>Starting Date: {startingDate}</p>
+                    <p>Ending Date: {endingDate}</p>
                 </div>
                 <div className={`${styles.carbonCalculator} ${styles.widget}`}>
                     <h4>Carbon Offset Calculator 🌳</h4>
@@ -67,13 +101,51 @@ export const Dashboard = () => {
                 <div className={`${styles.filtersBox} `}>
                     <h4>Filters 🔍</h4>
                     <p>Starting Date</p>
-                    <div className={styles.calendar}>
-                        <Calendar minDetail="year" />
-                    </div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            name="startDate"
+                            defaultValue={dayjs(MIN_DATE)}
+                            minDate={dayjs(MIN_DATE)}
+                            maxDate={dayjs(MAX_DATE)}
+                            format="DD-MM-YYYY"
+                            onChange={(newStartingDate) => {
+                                setTempStartingDate(newStartingDate.toString());
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <button
+                        onClick={() => {
+                            const fullDate = new Date(tempStartingDate);
+                            const formattedDate =
+                                dayjs(fullDate).format('YYYY-MM-DD');
+                            setStartingDate(formattedDate);
+                        }}
+                    >
+                        Apply
+                    </button>
                     <p>Ending Date</p>
-                    <div className={styles.calendar}>
-                        <Calendar minDetail="year" />
-                    </div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            name="startDate"
+                            defaultValue={dayjs(MAX_DATE)}
+                            minDate={dayjs(MIN_DATE)}
+                            maxDate={dayjs(MAX_DATE)}
+                            format="DD-MM-YYYY"
+                            onChange={(newEndingDate) => {
+                                setTempEndingDate(newEndingDate.toString());
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <button
+                        onClick={() => {
+                            const fullDate = new Date(tempEndingDate);
+                            const formattedDate =
+                                dayjs(fullDate).format('YYYY-MM-DD');
+                            setEndingDate(formattedDate);
+                        }}
+                    >
+                        Apply
+                    </button>
                 </div>
             </div>
         </>

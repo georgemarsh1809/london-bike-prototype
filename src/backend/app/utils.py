@@ -1,5 +1,7 @@
 from google.cloud import bigquery
 from dotenv import load_dotenv
+import pandas as pd
+import json
 
 
 load_dotenv()
@@ -8,7 +10,7 @@ client = bigquery.Client()
 
 # Test retrieval of data from hire table
 def test_hire_table():
-    query = """
+    query = """`
     SELECT 
         *
     FROM `bigquery-public-data.london_bicycles.cycle_hire` 
@@ -86,15 +88,37 @@ def get_station_ids_locations():
 """
     DATA FUNCTIONS
 """
-def get_top_borough(start_date: str, end_date: str):
+def get_top_stations(start_date: str, end_date: str):
+    # query = f"""
+    # SELECT *
+    # FROM `bigquery-public-data.london_bicycles.cycle_hire`
+    # WHERE start_date > "{start_date}" AND end_date < "{end_date}"
+    # LIMIT 10
+    # """ 
     query = f"""
-    SELECT 
-        *
-    FROM `bigquery-public-data.london_bicycles.cycle_hire` 
-    WHERE start_date BETWEEN {start_date} AND {end_date} 
-        LIMIT 1
+        WITH start_counts AS (
+    SELECT start_station_name AS station_name, COUNT(*) AS start_rides
+    FROM `bigquery-public-data.london_bicycles.cycle_hire`
+    WHERE start_station_name IS NOT NULL AND start_date > "{start_date}" AND end_date < "{end_date}"
+    GROUP BY start_station_name
+    ),
+    end_counts AS (
+    SELECT end_station_name AS station_name, COUNT(*) AS end_rides
+    FROM `bigquery-public-data.london_bicycles.cycle_hire`
+    WHERE end_station_name IS NOT NULL AND start_date > "{start_date}" AND end_date < "{end_date}"
+    GROUP BY end_station_name
+    )
+    SELECT
+    COALESCE(sc.station_name, ec.station_name) AS station_name,
+    COALESCE(sc.start_rides, 0) + COALESCE(ec.end_rides, 0) AS total_rides
+    FROM start_counts sc
+    FULL OUTER JOIN end_counts ec
+    ON sc.station_name = ec.station_name
+    ORDER BY total_rides DESC
+    LIMIT 100;
     """
     
+
     query_job = client.query(query)
 
     response = query_job.to_dataframe().to_dict(orient="records")

@@ -8,7 +8,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Allows FastAPI to talk to React over localhost
+    allow_origins=["*"],  # Allows FastAPI to talk to React over localhost
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],  
@@ -50,9 +50,9 @@ async def max_date():
 """
 DATA ENDPOINTS
 """
-@app.get("/get_top_borough")
-async def top_borough(start_date: str = Query(...), end_date: str = Query(...)):
-    data = get_top_borough(start_date, end_date)
+@app.get("/get_top_100_stations")
+async def top_stations(start_date: str = Query(...), end_date: str = Query(...)):
+    data = get_top_stations(start_date, end_date)
     return data
 
 @app.get("/get_stations")
