@@ -2,13 +2,16 @@ from google.cloud import bigquery
 from dotenv import load_dotenv
 import pandas as pd
 import json
-
+import os
 
 load_dotenv()
 
 client = bigquery.Client() 
 
-# Test retrieval of data from hire table
+"""
+    CONNECTION TEST FUNCTIONS
+"""
+
 def test_hire_table():
     query = """`
     SELECT 
@@ -25,7 +28,6 @@ def test_hire_table():
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
-# Test retrieval of data from stations table
 def test_stations_table():
     query = """
     SELECT 
@@ -38,7 +40,6 @@ def test_stations_table():
 
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
-
 
 """
     UTILITY FUNCTIONS
@@ -56,7 +57,6 @@ def get_min_date():
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
-
 def get_max_date():
     query = """
     SELECT 
@@ -68,7 +68,6 @@ def get_max_date():
 
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
-
 
 def get_station_ids_locations():
     query = """
@@ -83,41 +82,83 @@ def get_station_ids_locations():
     response = query_job.to_dataframe().to_json("station_locations.json", orient="records", indent=2)
     return response
 
+def find_missing_station_ids():
+    # Load local station names from JSON
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(script_dir, "station_details.json")
 
+    with open(json_path, "r") as f:
+        station_details = json.load(f)
+
+    known_ids = set(s["id"] for s in station_details if s["id"] is not None)
+
+    client = bigquery.Client()
+
+    # Query for all unique station IDs from start and end
+    query = """
+        SELECT DISTINCT start_station_id AS id
+        FROM `bigquery-public-data.london_bicycles.cycle_hire`
+        WHERE start_station_id IS NOT NULL
+        UNION DISTINCT
+        SELECT DISTINCT end_station_id AS id
+        FROM `bigquery-public-data.london_bicycles.cycle_hire`
+        WHERE end_station_id IS NOT NULL
+    """
+
+    query_job = client.query(query)
+    results = query_job.result()
+
+    missing_ids = set()
+
+    for row in results:
+        if row.id not in known_ids:
+            missing_ids.add(row.id)
+
+    print(f"✅ Found {len(missing_ids)} missing station IDs.")
+    print("🕵️‍♂️ Missing IDs:")
+    for id_ in sorted(missing_ids):
+        print(f"- {id_}")
+    print(len(station_details))
+
+    response = None
+    return response
 
 """
     DATA FUNCTIONS
 """
+
 def get_top_stations(start_date: str, end_date: str):
-    # query = f"""
-    # SELECT *
-    # FROM `bigquery-public-data.london_bicycles.cycle_hire`
-    # WHERE start_date > "{start_date}" AND end_date < "{end_date}"
-    # LIMIT 10
-    # """ 
+    """
+    This query is designed to find the top 100 busiest bike stations in London 
+    based on the total number of rides starting OR ending at each station, 
+    during the specified date range
+    """
+
     query = f"""
-        WITH start_counts AS (
-    SELECT start_station_name AS station_name, COUNT(*) AS start_rides
+    WITH start_counts AS (
+    SELECT start_station_id AS station_id, COUNT(*) AS start_rides
     FROM `bigquery-public-data.london_bicycles.cycle_hire`
-    WHERE start_station_name IS NOT NULL AND start_date > "{start_date}" AND end_date < "{end_date}"
-    GROUP BY start_station_name
+    WHERE start_station_id IS NOT NULL 
+    AND start_date > "2015-10-10" AND end_date < "2016-10-10"
+    AND (start_station_id < 876 OR end_station_id < 876)
+    GROUP BY start_station_id
     ),
     end_counts AS (
-    SELECT end_station_name AS station_name, COUNT(*) AS end_rides
+    SELECT end_station_id AS station_id, COUNT(*) AS end_rides
     FROM `bigquery-public-data.london_bicycles.cycle_hire`
-    WHERE end_station_name IS NOT NULL AND start_date > "{start_date}" AND end_date < "{end_date}"
-    GROUP BY end_station_name
+    WHERE end_station_id IS NOT NULL 
+    AND start_date > "2015-10-10" AND end_date < "2016-10-10"
+    AND (start_station_id < 876 OR end_station_id < 876)
+    GROUP BY end_station_id
     )
     SELECT
-    COALESCE(sc.station_name, ec.station_name) AS station_name,
+    COALESCE(sc.station_id, ec.station_id) AS station_id,
     COALESCE(sc.start_rides, 0) + COALESCE(ec.end_rides, 0) AS total_rides
     FROM start_counts sc
     FULL OUTER JOIN end_counts ec
-    ON sc.station_name = ec.station_name
-    ORDER BY total_rides DESC
-    LIMIT 100;
+    ON sc.station_id = ec.station_id
+    ORDER BY total_rides DESC;
     """
-    
 
     query_job = client.query(query)
 

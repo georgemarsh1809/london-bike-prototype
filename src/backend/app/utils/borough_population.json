@@ -1,0 +1,134 @@
+[
+    {
+        "borough": "Croydon",
+        "population_2021": 390700
+    },
+    {
+        "borough": "Barnet",
+        "population_2021": 389300
+    },
+    {
+        "borough": "Ealing",
+        "population_2021": 367100
+    },
+    {
+        "borough": "Newham",
+        "population_2021": 351000
+    },
+    {
+        "borough": "Brent",
+        "population_2021": 339800
+    },
+    {
+        "borough": "Bromley",
+        "population_2021": 330000
+    },
+    {
+        "borough": "Enfield",
+        "population_2021": 330000
+    },
+    {
+        "borough": "Wandsworth",
+        "population_2021": 327500
+    },
+    {
+        "borough": "Lambeth",
+        "population_2021": 317700
+    },
+    {
+        "borough": "Redbridge",
+        "population_2021": 310300
+    },
+    {
+        "borough": "Tower Hamlets",
+        "population_2021": 310300
+    },
+    {
+        "borough": "Southwark",
+        "population_2021": 307600
+    },
+    {
+        "borough": "Hillingdon",
+        "population_2021": 305900
+    },
+    {
+        "borough": "Lewisham",
+        "population_2021": 300600
+    },
+    {
+        "borough": "Greenwich",
+        "population_2021": 289100
+    },
+    {
+        "borough": "Hounslow",
+        "population_2021": 288200
+    },
+    {
+        "borough": "Waltham Forest",
+        "population_2021": 278400
+    },
+    {
+        "borough": "Haringey",
+        "population_2021": 264200
+    },
+    {
+        "borough": "Havering",
+        "population_2021": 262100
+    },
+    {
+        "borough": "Harrow",
+        "population_2021": 261200
+    },
+    {
+        "borough": "Hackney",
+        "population_2021": 259100
+    },
+    {
+        "borough": "Bexley",
+        "population_2021": 246500
+    },
+    {
+        "borough": "Barking and Dagenham",
+        "population_2021": 218900
+    },
+    {
+        "borough": "Islington",
+        "population_2021": 216600
+    },
+    {
+        "borough": "Merton",
+        "population_2021": 215200
+    },
+    {
+        "borough": "Camden",
+        "population_2021": 210100
+    },
+    {
+        "borough": "Sutton",
+        "population_2021": 209600
+    },
+    {
+        "borough": "Westminster",
+        "population_2021": 204200
+    },
+    {
+        "borough": "Richmond upon Thames",
+        "population_2021": 195300
+    },
+    {
+        "borough": "Hammersmith and Fulham",
+        "population_2021": 183200
+    },
+    {
+        "borough": "Kingston upon Thames",
+        "population_2021": 168100
+    },
+    {
+        "borough": "Kensington and Chelsea",
+        "population_2021": 143400
+    },
+    {
+        "borough": "City of London",
+        "population_2021": 8600
+    }
+]

@@ -17,12 +17,15 @@
 .widget {
     background: #557751;
     border-radius: 10px;
-    padding: 0.5rem;
+    padding: 0.6rem;
+    padding-left: 0.8rem;
     color: white;
     filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.7));
     overflow: hidden;
 }
 .top-borough {
+    display: flex;
+    flex-direction: column;
     grid-column: 1 / span 1;
     grid-row: 1;
 }
@@ -55,8 +58,27 @@
 
 .top-borough-output {
     font-size: 40px;
-    font-weight: 500;
+    font-weight: 650;
     margin: 0;
     margin-left: 0.5rem;
-    margin-top: -0.5rem;
+    margin-top: -0.8rem;
+}
+
+.apply-button {
+    font-size: 16px;
+    font-weight: 300;
+    width: 5rem;
+    padding: 0.5rem;
+    height: auto;
+    margin-top: 1.5rem;
+    background: #557751;
+    border: solid 2px #263a24;
+    border-radius: 20px;
+    transition: background 0.2s ease-in-out;
+}
+
+.apply-button:hover {
+    cursor: pointer;
+    transition: background 0.1s ease-in-out;
+    background: #3d563a;
 }

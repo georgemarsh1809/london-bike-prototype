@@ -46,7 +46,6 @@ async def max_date():
     data = get_max_date()
     return data
 
-
 """
 DATA ENDPOINTS
 """

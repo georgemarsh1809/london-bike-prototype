@@ -6,8 +6,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styles from './Dashboard.module.css';
 import dayjs from 'dayjs';
 
+import { findTopBoroughByRidesPerCapita } from './utils/findTopBoroughByRidesPerCapita';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
 import stationDetails from '../../../backend/app/utils/_station_details.json';
+import boroughPopulations from '../../../backend/app/utils/borough_population.json';
 
 export const Dashboard = () => {
     const { startingDate, setStartingDate, endingDate, setEndingDate } =
@@ -33,45 +35,14 @@ export const Dashboard = () => {
             const resData = await res.json();
             console.log('Res', resData);
 
-            // Find the busiest borough
-            const stationToBorough = {};
-            stationDetails.forEach(({ name, borough }) => {
-                stationToBorough[name.trim().toLowerCase()] = borough;
-            });
-
-            const boroughRides = {};
-
-            resData.forEach(({ station_name, total_rides }) => {
-                const name = station_name.trim().toLowerCase();
-                const borough = stationToBorough[name];
-
-                if (borough) {
-                    boroughRides[borough] =
-                        (boroughRides[borough] || 0) + total_rides;
-                } else {
-                    console.warn(
-                        `Station not found in details: ${station_name}`
-                    );
-                }
-            });
-
-            console.log(boroughRides);
-
-            // Find the busiest borough
-            const busiestBorough = Object.entries(boroughRides).reduce(
-                (max, [borough, rides]) => {
-                    // if (borough.toLowerCase() === 'unknown') return max; // skip unknown
-                    return rides > max.rides ? { borough, rides } : max;
-                },
-                { borough: null, rides: 0 }
+            // From the reponse of the call, work out the most sustainable borough
+            setTopBorough(
+                findTopBoroughByRidesPerCapita(
+                    resData,
+                    stationDetails,
+                    boroughPopulations
+                ).borough
             );
-
-            console.log(
-                'Busiest borough:',
-                busiestBorough.borough,
-                busiestBorough.rides
-            );
-            setTopBorough(busiestBorough.borough);
         };
 
         getTopBorough();
@@ -81,13 +52,12 @@ export const Dashboard = () => {
         <>
             <div className={styles.dashboardContainer}>
                 <div className={`${styles.topBorough} ${styles.widget} `}>
-                    <h4>Most Popular Borough 🏆</h4>
+                    <h4>Most Sustainable Borough 🏆</h4>
                     <p className={styles.topBoroughOutput}>{topBorough}</p>
                 </div>
                 <div className={`${styles.hotSpotMap} ${styles.widget}`}>
                     <h4>Hot Spots 🔥</h4>
-                    <p>Starting Date: {startingDate}</p>
-                    <p>Ending Date: {endingDate}</p>
+                    <p>Leaflets</p>
                 </div>
                 <div className={`${styles.carbonCalculator} ${styles.widget}`}>
                     <h4>Carbon Offset Calculator 🌳</h4>
@@ -113,16 +83,16 @@ export const Dashboard = () => {
                             }}
                         />
                     </LocalizationProvider>
-                    <button
+                    {/* <button
                         onClick={() => {
-                            const fullDate = new Date(tempStartingDate);
-                            const formattedDate =
-                                dayjs(fullDate).format('YYYY-MM-DD');
-                            setStartingDate(formattedDate);
+                            const fullStartDate = new Date(tempStartingDate);
+                            const formattedStartDate =
+                                dayjs(fullStartDate).format('YYYY-MM-DD');
+                            setStartingDate(formattedStartDate);
                         }}
                     >
                         Apply
-                    </button>
+                    </button> */}
                     <p>Ending Date</p>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -137,11 +107,17 @@ export const Dashboard = () => {
                         />
                     </LocalizationProvider>
                     <button
+                        className={styles.applyButton}
                         onClick={() => {
                             const fullDate = new Date(tempEndingDate);
                             const formattedDate =
                                 dayjs(fullDate).format('YYYY-MM-DD');
                             setEndingDate(formattedDate);
+
+                            const fullStartDate = new Date(tempStartingDate);
+                            const formattedStartDate =
+                                dayjs(fullStartDate).format('YYYY-MM-DD');
+                            setStartingDate(formattedStartDate);
                         }}
                     >
                         Apply
