@@ -139,7 +139,7 @@ def get_top_stations(start_date: str, end_date: str):
     SELECT start_station_id AS station_id, COUNT(*) AS start_rides
     FROM `bigquery-public-data.london_bicycles.cycle_hire`
     WHERE start_station_id IS NOT NULL 
-    AND start_date > "2015-10-10" AND end_date < "2016-10-10"
+    AND start_date > "{start_date}" AND end_date < "{end_date}"
     AND (start_station_id < 876 OR end_station_id < 876)
     GROUP BY start_station_id
     ),
@@ -147,7 +147,7 @@ def get_top_stations(start_date: str, end_date: str):
     SELECT end_station_id AS station_id, COUNT(*) AS end_rides
     FROM `bigquery-public-data.london_bicycles.cycle_hire`
     WHERE end_station_id IS NOT NULL 
-    AND start_date > "2015-10-10" AND end_date < "2016-10-10"
+    AND start_date > "{start_date}" AND end_date < "{end_date}"
     AND (start_station_id < 876 OR end_station_id < 876)
     GROUP BY end_station_id
     )

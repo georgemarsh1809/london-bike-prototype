@@ -1,0 +1,77 @@
+import React from 'react';
+import {
+    BarChart,
+    Bar,
+    Rectangle,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from 'recharts';
+
+const EllipsisTick = ({ x, y, payload }) => {
+    const maxChars = 9;
+    const label =
+        payload.value.length > maxChars
+            ? payload.value.slice(0, maxChars - 1) + '…'
+            : payload.value;
+
+    const barWidth = 60; // adjust this to your actual bar width
+    const leftAlignedX = x - barWidth / 2 + 4; // +4 px padding so text isn’t flush left
+    return (
+        <text
+            x={leftAlignedX - 5}
+            y={y + 10}
+            fill="#333"
+            textAnchor="start"
+            fontSize={13}
+            style={{ userSelect: 'none' }}
+        >
+            {label}
+        </text>
+    );
+};
+
+export const BottomBoroughsGraph = ({ data }) => {
+    return (
+        <ResponsiveContainer width="100%" height="100%">
+            <div
+                style={{
+                    borderRadius: '10px',
+                    backgroundColor: '#f5f5f5',
+                    padding: '20px',
+                }}
+            >
+                <BarChart
+                    data={data}
+                    width={750}
+                    height={300}
+                    margin={{
+                        right: 10,
+                        left: -15,
+                        bottom: -8,
+                    }}
+                    barCategoryGap="3%"
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+
+                    <XAxis dataKey="borough" tick={EllipsisTick} interval={0} />
+                    <YAxis
+                        tick={{ fill: '#222', fontSize: 12 }}
+                        tickFormatter={(value) => value.toFixed(1)}
+                    />
+                    <Tooltip />
+                    <Bar
+                        dataKey="rate"
+                        fill="#6fbf73"
+                        barSize={'11%'}
+                        radius={[4, 4, 0, 0]}
+                        barBackground={{ fill: '#e0e0e0' }}
+                    />
+                </BarChart>
+            </div>
+        </ResponsiveContainer>
+    );
+};

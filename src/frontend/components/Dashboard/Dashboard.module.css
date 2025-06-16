@@ -15,6 +15,8 @@
 }
 
 .widget {
+    display: flex;
+    flex-direction: column;
     background: #557751;
     border-radius: 10px;
     padding: 0.6rem;
@@ -24,7 +26,6 @@
     overflow: hidden;
 }
 .top-borough {
-    display: flex;
     flex-direction: column;
     grid-column: 1 / span 1;
     grid-row: 1;
@@ -64,9 +65,10 @@
     margin-top: -0.8rem;
 }
 
-.apply-button {
-    font-size: 16px;
-    font-weight: 300;
+.apply-button,
+.reset-button {
+    font-size: 17px;
+    font-weight: 100;
     width: 5rem;
     padding: 0.5rem;
     height: auto;
@@ -77,8 +79,14 @@
     transition: background 0.2s ease-in-out;
 }
 
-.apply-button:hover {
+.apply-button:enabled:hover,
+.reset-button:enabled:hover {
     cursor: pointer;
     transition: background 0.1s ease-in-out;
     background: #3d563a;
+}
+
+.filter-button-container {
+    display: flex;
+    justify-content: space-between;
 }
