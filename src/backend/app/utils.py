@@ -160,6 +160,10 @@ def get_top_stations(start_date: str, end_date: str):
     ORDER BY total_rides DESC;
     """
 
+    """
+        MAYBE CHANGE TO JUST RIDE STARTS, NOT STARTS AND ENDS
+    """
+
     query_job = client.query(query)
 
     response = query_job.to_dataframe().to_dict(orient="records")

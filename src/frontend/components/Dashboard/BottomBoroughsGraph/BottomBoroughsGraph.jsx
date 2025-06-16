@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     BarChart,
     Bar,
@@ -34,16 +33,32 @@ const EllipsisTick = ({ x, y, payload }) => {
     );
 };
 
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div>
+                <p>
+                    <strong>Borough:</strong> {label}
+                </p>
+                <p>
+                    <strong>Rate:</strong> {payload[0].borough}
+                </p>
+            </div>
+        );
+    }
+    return null;
+};
+
 export const BottomBoroughsGraph = ({ data }) => {
     return (
-        <ResponsiveContainer width="100%" height="100%">
-            <div
-                style={{
-                    borderRadius: '10px',
-                    backgroundColor: '#f5f5f5',
-                    padding: '20px',
-                }}
-            >
+        <div
+            style={{
+                borderRadius: '10px',
+                backgroundColor: '#f5f5f5',
+                padding: '15px',
+            }}
+        >
+            <ResponsiveContainer width="100%" height={302}>
                 <BarChart
                     data={data}
                     width={750}
@@ -56,13 +71,18 @@ export const BottomBoroughsGraph = ({ data }) => {
                     barCategoryGap="3%"
                 >
                     <CartesianGrid strokeDasharray="3 3" />
-
                     <XAxis dataKey="borough" tick={EllipsisTick} interval={0} />
                     <YAxis
                         tick={{ fill: '#222', fontSize: 12 }}
                         tickFormatter={(value) => value.toFixed(1)}
                     />
-                    <Tooltip />
+                    <Tooltip
+                        formatter={(value, name) => [
+                            `${value}`,
+                            name.charAt(0).toUpperCase() + name.slice(1),
+                        ]}
+                        labelFormatter={(label) => `Borough: ${label}`}
+                    />
                     <Bar
                         dataKey="rate"
                         fill="#6fbf73"
@@ -71,7 +91,7 @@ export const BottomBoroughsGraph = ({ data }) => {
                         barBackground={{ fill: '#e0e0e0' }}
                     />
                 </BarChart>
-            </div>
-        </ResponsiveContainer>
+            </ResponsiveContainer>
+        </div>
     );
 };

@@ -21,7 +21,7 @@ export const LoadingSpinner = ({ display }) => (
                 type="rotate"
                 from="0 25 25"
                 to="360 25 25"
-                dur="1s"
+                dur="1.5s"
                 repeatCount="indefinite"
             />
         </circle>

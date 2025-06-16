@@ -49,7 +49,7 @@ async def max_date():
 """
 DATA ENDPOINTS
 """
-@app.get("/get_top_100_stations")
+@app.get("/get_top_stations")
 async def top_stations(start_date: str = Query(...), end_date: str = Query(...)):
     data = get_top_stations(start_date, end_date)
     return data
