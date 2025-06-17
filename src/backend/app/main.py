@@ -47,6 +47,7 @@ async def max_date():
     data = get_max_date()
     return data
 
+
 """
 DATA ENDPOINTS
 """
@@ -66,7 +67,7 @@ async def most_sustainable(start_date: str = Query(...), end_date: str = Query(.
     return data
 
 @app.get("/db/least_sustainable_boroughs")
-async def top_stations(start_date: str = Query(...), end_date: str = Query(...)):
+async def least_sustainable(start_date: str = Query(...), end_date: str = Query(...)):
     ordered_stations = get_ordered_stations(start_date, end_date)
     station_details = load_station_details()
     borough_populations = load_borough_populations()
@@ -74,10 +75,6 @@ async def top_stations(start_date: str = Query(...), end_date: str = Query(...))
     data = get_least_sustainable_boroughs(ordered_stations, station_details, borough_populations)
     return data
 
-@app.get("/get_stations")
-async def get_stations():
-    data = get_station_ids_locations()
-    return data
 
 
 

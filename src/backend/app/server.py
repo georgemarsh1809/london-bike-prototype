@@ -9,7 +9,7 @@ load_dotenv()
 client = bigquery.Client() 
 
 """
-    CONNECTION TEST FUNCTIONS
+    CONNECTION TEST 
 """
 
 def test_hire_table():
@@ -42,7 +42,7 @@ def test_stations_table():
     return response
 
 """
-    UTILITY FUNCTIONS
+    UTILITY 
 """
 
 def get_min_date():
@@ -124,7 +124,7 @@ def find_missing_station_ids():
     return response
 
 """
-    DATA FUNCTIONS
+    QUERIES
 """
 
 def get_ordered_stations(start_date: str, end_date: str):

@@ -33,11 +33,13 @@ export const Dashboard = () => {
     ] = useState(false);
 
     useEffect(() => {
+        setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
+        setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
+
         const getMostSustainableBorough = async () => {
             // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
             // The data is then passed to a state setter for rendering on the FE
 
-            setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
             try {
                 const res = await fetch(
                     'http://localhost:8000/db/most_sustainable_borough?' +
@@ -60,8 +62,6 @@ export const Dashboard = () => {
                 }
             } catch (error) {
                 console.log('Fetch error:', error);
-            } finally {
-                setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
             }
         };
 
@@ -69,7 +69,6 @@ export const Dashboard = () => {
             // This API call gets the data for 'Least Sustainable Boroughs', which is handled by backend services
             // The data is then passed to a state setter for rendering on the FE
 
-            setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
             try {
                 const res = await fetch(
                     'http://localhost:8000/db/least_sustainable_boroughs?' +
@@ -88,13 +87,16 @@ export const Dashboard = () => {
                 setBottomBoroughs(resData);
             } catch (error) {
                 console.log('Fetch error:', error);
-            } finally {
-                setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
             }
         };
 
-        getLeastSustainableBoroughs();
-        getMostSustainableBorough();
+        Promise.all([
+            getLeastSustainableBoroughs(),
+            getMostSustainableBorough(),
+        ]).finally(() => {
+            setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
+            setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
+        });
     }, [startingDate, endingDate]);
 
     return (
