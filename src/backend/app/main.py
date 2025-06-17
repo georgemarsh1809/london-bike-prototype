@@ -84,6 +84,20 @@ async def hot_spots(start_date: str = Query(...), end_date: str = Query(...)):
     data = get_hot_spots(ordered_stations, station_details, station_coords)
     return data
 
+@app.get("/db/get_CO2_offset")
+async def CO2_offset(start_date: str = Query(...), end_date: str = Query(...)):
+    # Res from API Call:
+    duration_in_seconds = get_cycling_duration(start_date, end_date)[0]["duration"]
+    # Transform into meaning (Carbon offset):
+    co2_amount = get_CO2_offset(duration_in_seconds)[0]
+    estimated_distanced_km = get_CO2_offset(duration_in_seconds)[1]
+    tree_equivalent = calculate_tree_equivalent(co2_amount)
+
+    data = [co2_amount, tree_equivalent, estimated_distanced_km]
+
+    return data
+
+
 
 
 

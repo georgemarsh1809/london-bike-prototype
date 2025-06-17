@@ -148,7 +148,7 @@ def get_ordered_stations(start_date: str, end_date: str):
     FROM `bigquery-public-data.london_bicycles.cycle_hire`
     WHERE end_station_id IS NOT NULL 
     AND start_date > "{start_date}" AND end_date < "{end_date}"
-    AND (start_station_id < 876 OR end_station_id < 876)
+    AND start_station_id < 876 AND end_station_id < 876
     GROUP BY end_station_id
     )
     SELECT
@@ -169,4 +169,36 @@ def get_ordered_stations(start_date: str, end_date: str):
     response = query_job.to_dataframe().to_dict(orient="records")
     return response
 
+def get_cycling_duration(start_date: str, end_date: str):
+    """
+    This query returns the cycling duration in seconds of all rides between
+    the specified start and end dates 
+    """
 
+    query = f"""
+    SELECT COUNT(duration) as duration
+    FROM `bigquery-public-data.london_bicycles.cycle_hire` 
+    WHERE start_station_id < 876 AND end_station_id < 876
+    AND start_date > "{start_date}" AND end_date < "{end_date}" 
+    """
+
+    query_job = client.query(query)
+
+    response = query_job.to_dataframe().to_dict(orient="records")
+    return response
+
+def get_number_of_trips(start_date: str, end_date: str):
+    """
+    This query simply returns the number of trips between the specified start and end date
+    """
+
+    query = f"""
+    SELECT COUNT(*)
+    FROM `bigquery-public-data.london_bicycles.cycle_hire` 
+    WHERE start_date > "{start_date}" AND end_date < "{end_date}" 
+    """
+
+    query_job = client.query(query)
+
+    response = query_job.to_dataframe().to_dict(orient="records")
+    return response

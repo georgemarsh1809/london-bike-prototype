@@ -12,12 +12,13 @@ export const useStore = create((set) => ({
     mostSustainableBoroughIsLoading: false,
     setMostSustainableBoroughIsLoading: (value) =>
         set({ mostSustainableBoroughIsLoading: value }),
-
     leastSustainableBoroughsIsLoading: false,
     setLeastSustainableBoroughsIsLoading: (value) =>
         set({ leastSustainableBoroughsIsLoading: value }),
     hotSpotsIsLoading: false,
     setHotSpotsIsLoading: (value) => set({ hotSpotsIsLoading: value }),
+    carbonOffsetIsLoading: false,
+    setCarbonOffsetIsLoading: (value) => set({ carbonOffsetIsLoading: value }),
 
     // Data
     topBorough: '',
@@ -26,4 +27,10 @@ export const useStore = create((set) => ({
     setBottomBoroughs: (data) => ({ bottomBoroughs: data }),
     hotSpots: [],
     setHotSpots: (data) => ({ hotSpots: data }),
+    carbonOffset: '',
+    setCarbonOffset: (data) => set({ carbonOffset: data }),
+    treeEquivalent: '',
+    setTreeEquivalent: (data) => set({ treeEquivalent: data }),
+    estimatedDistance: '',
+    setEstimatedDistance: (data) => set({ estimatedDistance: data }),
 }));

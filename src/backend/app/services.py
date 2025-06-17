@@ -1,18 +1,10 @@
 import json
-import os
 from pathlib import Path
-
+import math
 def get_most_sustainable_borough(top_stations, station_details, borough_populations):
     """
     Returns the borough with the highest number of rides per capita.
 
-    Args:
-        top_stations (list): List of dicts with 'station_id' and 'total_rides'.
-        station_details (list): List of dicts with 'id' and 'borough'.
-        borough_populations (list): List of dicts with 'borough' and 'population_2021'.
-
-    Returns:
-        dict: Top borough and its rides per capita value.
     """
 
     # Map station_id to borough
@@ -145,7 +137,30 @@ def get_hot_spots(ordered_stations, station_details, station_coords, top_n=10):
 
     return top_stations_info
 
+def get_CO2_offset(duration_in_seconds):
+    # ASSUMPTIONS:
+    # Avg cycling speed in London = ~15 km/h (4.17 m/s)
+    # Avg emissions: 171 grams / 0.171kg CO² per km (for a car)
 
+    AVG_CYCLING_SPEED = 4.17 # m/s
+    AVG_EMISSIONS = 0.171 # kg/km
+
+    # S = D / T → D = S * T
+    estimated_distance_m = AVG_CYCLING_SPEED * duration_in_seconds # meters
+    estimated_distance_km = int(estimated_distance_m / 1000) # kilometers 
+    amount_of_CO2_saved = int(estimated_distance_km * AVG_EMISSIONS) # kg
+
+    data = [amount_of_CO2_saved, estimated_distance_km]
+
+    return (data)
+
+def calculate_tree_equivalent(co2_amount):
+    # ASSUMPTIONS
+    # Avg CO² absorption rate for 1 tree = 21 kg / year
+    ABSORPTION_RATE = 21
+    tree_equivalent = int(co2_amount) / ABSORPTION_RATE
+
+    return math.floor(tree_equivalent)
 
 def load_station_details():
     file_path = Path(__file__).parent / "utils/data" / "station_details.json"

@@ -3,10 +3,11 @@ import { useStore } from '../../stateManagement/store';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { MostSustainableBorough } from './MostSustainableBorough';
-import { BottomBoroughsGraph } from './BottomBoroughsGraph/';
+import { MostSustainableBorough } from './components/MostSustainableBorough';
+import { BottomBoroughsGraph } from './components/BottomBoroughsGraph';
 import { HotSpotsMap } from '../HotSpotsMap';
-import { LoadingSpinner } from './LoadingSpinner';
+import { CarbonOffsetCalc } from './components/CarbonOffsetCalc/CarbonOffsetCalc';
+import { LoadingSpinner } from './components/LoadingSpinner';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
 import dayjs from 'dayjs';
 import styles from './Dashboard.module.css';
@@ -19,23 +20,30 @@ export const Dashboard = () => {
         endingDate,
         setEndingDate,
         setTopBorough,
+        setMostSustainableBoroughIsLoading,
         hotSpotsIsLoading,
         setHotSpotsIsLoading,
-        setMostSustainableBoroughIsLoading,
         leastSustainableBoroughsIsLoading,
         setLeastSustainableBoroughsIsLoading,
+        setCarbonOffset,
+        setCarbonOffsetIsLoading,
+        setTreeEquivalent,
+        setEstimatedDistance,
     } = useStore();
 
     // Local State
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
+
+    // Move to global state for consumption in components
     const [hotSpots, setHotSpots] = useState();
 
     useEffect(() => {
         setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
         setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
         setHotSpotsIsLoading(true);
+        setCarbonOffsetIsLoading(true);
 
         const getMostSustainableBorough = async () => {
             // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
@@ -110,9 +118,29 @@ export const Dashboard = () => {
                 // console.log('(Res) least_sustainable_boroughs:', resData);
 
                 const resData = await res.json();
-                // console.log(resData);
-
                 setHotSpots(resData);
+            } catch (error) {
+                console.log('Fetch error:', error);
+            }
+        };
+
+        const getCO2Offset = async () => {
+            try {
+                const res = await fetch(
+                    'http://localhost:8000/db/get_CO2_offset?' +
+                        new URLSearchParams({
+                            start_date: startingDate,
+                            end_date: endingDate,
+                        }).toString(),
+                    { method: 'GET' }
+                );
+
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+                const resData = await res.json();
+                setCarbonOffset(Math.round(resData[0]), 2);
+                setTreeEquivalent(resData[1]);
+                setEstimatedDistance(Math.round(resData[2]), 2);
             } catch (error) {
                 console.log('Fetch error:', error);
             }
@@ -122,10 +150,12 @@ export const Dashboard = () => {
             getLeastSustainableBoroughs(),
             getMostSustainableBorough(),
             getHotSpots(),
+            getCO2Offset(),
         ]).finally(() => {
             setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
             setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
             setHotSpotsIsLoading(false);
+            setCarbonOffsetIsLoading(false);
         });
     }, [startingDate, endingDate]);
 
@@ -136,17 +166,18 @@ export const Dashboard = () => {
                     <MostSustainableBorough />
                 </div>
                 <div className={`${styles.hotSpotMap} ${styles.widget}`}>
-                    <h4>Top Hot Spots 🔥</h4>
-
                     {hotSpotsIsLoading ? (
                         <LoadingSpinner />
                     ) : (
-                        <HotSpotsMap stations={hotSpots} />
+                        <>
+                            <h4>Top Hot Spots 🔥</h4>
+                            <HotSpotsMap stations={hotSpots} />
+                        </>
                     )}
                 </div>
 
                 <div className={`${styles.carbonCalculator} ${styles.widget}`}>
-                    <h4>Carbon Offset Calculator 🌳</h4>
+                    <CarbonOffsetCalc />
                 </div>
                 <div className={`${styles.usageChart} ${styles.widget}`}>
                     <h4>Bike Usage Vs Time ⏱️</h4>
