@@ -36,7 +36,7 @@ export const Dashboard = () => {
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
 
-    // Move to global state for consumption in components
+    // Move to global state for consumption in components:
     const [hotSpots, setHotSpots] = useState();
 
     useEffect(() => {
