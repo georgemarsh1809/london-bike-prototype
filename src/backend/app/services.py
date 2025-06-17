@@ -122,6 +122,31 @@ def get_least_sustainable_boroughs(top_stations, station_details, borough_popula
     # Flip to show "least bad" first (like the reversed JS logic)
     return list(reversed(bottom_8))
 
+def get_hot_spots(ordered_stations, station_details, station_coords, top_n=10):
+    # Create lookup dictionaries for fast access
+    id_to_name = {station["id"]: station["name"] for station in station_details}
+    id_to_coords = {station["id"]: (station["latitude"], station["longitude"]) for station in station_coords}
+
+    # Prepare results
+    top_stations_info = []
+
+    for entry in ordered_stations[:top_n]:
+        station_id = entry["station_id"]
+        total_rides = entry["total_rides"]
+        name = id_to_name.get(station_id, "Unknown")
+        lat, lon = id_to_coords.get(station_id, (None, None))
+
+        top_stations_info.append({
+            "name": name,
+            "total_rides": total_rides,
+            "latitude": lat,
+            "longitude": lon
+        })
+
+    return top_stations_info
+
+
+
 def load_station_details():
     file_path = Path(__file__).parent / "utils/data" / "station_details.json"
     with file_path.open("r") as file:
@@ -135,4 +160,9 @@ def load_borough_populations():
     print("read")
     return borough_populations
 
-load_borough_populations()
+def load_station_coords():
+    file_path = Path(__file__).parent / "utils/data" / "station_coords.json"
+    with file_path.open("r") as file:
+        station_coords = json.load(file)
+    print("read")
+    return station_coords

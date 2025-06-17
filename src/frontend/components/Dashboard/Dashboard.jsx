@@ -3,7 +3,9 @@ import { useStore } from '../../stateManagement/store';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { MostSustainableBorough } from './MostSustainableBorough';
 import { BottomBoroughsGraph } from './BottomBoroughsGraph/';
+import { HotSpotsMap } from '../HotSpotsMap';
 import { LoadingSpinner } from './LoadingSpinner';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
 import dayjs from 'dayjs';
@@ -11,30 +13,29 @@ import styles from './Dashboard.module.css';
 
 export const Dashboard = () => {
     // Global State
-    const { startingDate, setStartingDate, endingDate, setEndingDate } =
-        useStore();
+    const {
+        startingDate,
+        setStartingDate,
+        endingDate,
+        setEndingDate,
+        setTopBorough,
+        hotSpotsIsLoading,
+        setHotSpotsIsLoading,
+        setMostSustainableBoroughIsLoading,
+        leastSustainableBoroughsIsLoading,
+        setLeastSustainableBoroughsIsLoading,
+    } = useStore();
 
     // Local State
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
-    const [topBorough, setTopBorough] = useState('');
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
-
-    // Having individual loading states for each widget means that the data can be returned out of sync for each widget,
-    //      and they will load individually
-    const [
-        mostSustainableBoroughIsLoading,
-        setMostSustainableBoroughIsLoading,
-    ] = useState(false);
-
-    const [
-        leastSustainableBoroughsIsLoading,
-        setLeastSustainableBoroughsIsLoading,
-    ] = useState(false);
+    const [hotSpots, setHotSpots] = useState();
 
     useEffect(() => {
         setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
         setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
+        setHotSpotsIsLoading(true);
 
         const getMostSustainableBorough = async () => {
             // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
@@ -53,10 +54,11 @@ export const Dashboard = () => {
                 // Explicit handling of a 200 response
                 if (!res.ok) throw new Error(`API Error: ${res.status}`);
 
-                // console.log('(Res) most_sustainable_boroughs::', resData);
                 const resData = await res.json();
+                // console.log('(Res) most_sustainable_boroughs::', resData);
+
                 if (resData?.borough) {
-                    setTopBorough(resData.borough);
+                    setTopBorough(resData);
                 } else {
                     setTopBorough('No data found');
                 }
@@ -90,12 +92,40 @@ export const Dashboard = () => {
             }
         };
 
+        const getHotSpots = async () => {
+            // This API call gets the data for 'Least Sustainable Boroughs', which is handled by backend services
+            // The data is then passed to a state setter for rendering on the FE
+
+            try {
+                const res = await fetch(
+                    'http://localhost:8000/db/hot_spots?' +
+                        new URLSearchParams({
+                            start_date: startingDate,
+                            end_date: endingDate,
+                        }).toString(),
+                    { method: 'GET' }
+                );
+
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+                // console.log('(Res) least_sustainable_boroughs:', resData);
+
+                const resData = await res.json();
+                // console.log(resData);
+
+                setHotSpots(resData);
+            } catch (error) {
+                console.log('Fetch error:', error);
+            }
+        };
+
         Promise.all([
             getLeastSustainableBoroughs(),
             getMostSustainableBorough(),
+            getHotSpots(),
         ]).finally(() => {
             setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
             setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
+            setHotSpotsIsLoading(false);
         });
     }, [startingDate, endingDate]);
 
@@ -103,17 +133,18 @@ export const Dashboard = () => {
         <>
             <div className={styles.dashboardContainer}>
                 <div className={`${styles.topBorough} ${styles.widget} `}>
-                    <h4>Most Sustainable Borough 🏆 (Rides / Capita)</h4>
-                    {mostSustainableBoroughIsLoading ? ( // If we are waiting for the API response data, display the loading circle
-                        <LoadingSpinner />
-                    ) : (
-                        <p className={styles.topBoroughOutput}>{topBorough}</p>
-                    )}
+                    <MostSustainableBorough />
                 </div>
                 <div className={`${styles.hotSpotMap} ${styles.widget}`}>
-                    <h4>Hot Spots 🔥</h4>
-                    <p>Leaflets</p>
+                    <h4>Top Hot Spots 🔥</h4>
+
+                    {hotSpotsIsLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <HotSpotsMap stations={hotSpots} />
+                    )}
                 </div>
+
                 <div className={`${styles.carbonCalculator} ${styles.widget}`}>
                     <h4>Carbon Offset Calculator 🌳</h4>
                 </div>
@@ -129,7 +160,7 @@ export const Dashboard = () => {
                     )}
                 </div>
                 <div className={`${styles.filtersBox} `}>
-                    <h4>Filters 🔍</h4>
+                    <h4 style={{ color: ' #557751' }}>Filters 🔍</h4>
                     <p>Starting Date</p>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -209,6 +240,7 @@ export const Dashboard = () => {
                             }}
                         />
                     </LocalizationProvider>
+
                     <div className={styles.filterButtonContainer}>
                         <button
                             className={styles.applyButton}

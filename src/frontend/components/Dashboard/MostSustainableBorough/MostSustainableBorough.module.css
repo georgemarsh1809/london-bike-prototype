@@ -1,0 +1,29 @@
+.top-borough-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.top-borough-output {
+    display: flex;
+    justify-content: space-between;
+    /* background-color: red; */
+    margin-left: 5px;
+    margin-right: 20px;
+    width: auto;
+    height: auto;
+    font-size: 40px;
+    line-height: 0;
+    font-weight: 650;
+}
+
+.ignore-london-checkbox {
+    font-weight: 500;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    gap: 0.2rem;
+}

@@ -9,6 +9,7 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts';
+import styles from './BottomBoroughsGraph.module.css';
 
 const EllipsisTick = ({ x, y, payload }) => {
     const maxChars = 9;
@@ -33,22 +34,6 @@ const EllipsisTick = ({ x, y, payload }) => {
     );
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-            <div>
-                <p>
-                    <strong>Borough:</strong> {label}
-                </p>
-                <p>
-                    <strong>Rate:</strong> {payload[0].borough}
-                </p>
-            </div>
-        );
-    }
-    return null;
-};
-
 export const BottomBoroughsGraph = ({ data }) => {
     return (
         <div
@@ -56,6 +41,8 @@ export const BottomBoroughsGraph = ({ data }) => {
                 borderRadius: '10px',
                 backgroundColor: '#f5f5f5',
                 padding: '15px',
+                border: 'solid 3px rgb(62, 94, 58)',
+                boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5)',
             }}
         >
             <ResponsiveContainer width="100%" height={302}>

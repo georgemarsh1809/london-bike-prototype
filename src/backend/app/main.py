@@ -75,6 +75,14 @@ async def least_sustainable(start_date: str = Query(...), end_date: str = Query(
     data = get_least_sustainable_boroughs(ordered_stations, station_details, borough_populations)
     return data
 
+@app.get("/db/hot_spots")
+async def hot_spots(start_date: str = Query(...), end_date: str = Query(...)):
+    ordered_stations = get_ordered_stations(start_date, end_date)
+    station_details = load_station_details()
+    station_coords = load_station_coords()
+
+    data = get_hot_spots(ordered_stations, station_details, station_coords)
+    return data
 
 
 

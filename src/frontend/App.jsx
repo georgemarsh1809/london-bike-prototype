@@ -1,6 +1,7 @@
 import { Dashboard } from './components/Dashboard';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import 'leaflet/dist/leaflet.css';
 
 function App() {
     return (

@@ -1,0 +1,1 @@
+export { HotSpotsMap } from './HotSpotsMap';
