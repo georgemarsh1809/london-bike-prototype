@@ -3,14 +3,10 @@ import { useStore } from '../../stateManagement/store';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { findTopBoroughByRidesPerCapita } from './_utils/findTopBoroughByRidesPerCapita';
-import { findBottomBoroughByRidesPerCapita } from './_utils/findBottomBoroughByRidesPerCapita';
 import { BottomBoroughsGraph } from './BottomBoroughsGraph/';
 import { LoadingSpinner } from './LoadingSpinner';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
 import dayjs from 'dayjs';
-import stationDetails from '../../../backend/app/utils/data/_station_details.json';
-import boroughPopulations from '../../../backend/app/utils/data/borough_population.json';
 import styles from './Dashboard.module.css';
 
 export const Dashboard = () => {
@@ -19,24 +15,32 @@ export const Dashboard = () => {
         useStore();
 
     // Local State
-    const [isLoading, setIsLoading] = useState(false);
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
     const [topBorough, setTopBorough] = useState('');
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
 
-    useEffect(() => {
-        const getStationsByRideNumber = async () => {
-            // This API Call returns the stations in order of the number of rides that started or ended there
-            // The data is then used and manipulated in different ways to provide various insights
-            // i.e. 'Most Sustainable Borough (hightest rides/capita)', or 'Least Sustainable Boroughs (lowest rides/capita)'
-            // Its inside a useEffect, which is dependent on the start and end date states, so that it runs again and
-            //      updates the data when the filters are changed
+    // Having individual loading states for each widget means that the data can be returned out of sync for each widget,
+    //      and they will load individually
+    const [
+        mostSustainableBoroughIsLoading,
+        setMostSustainableBoroughIsLoading,
+    ] = useState(false);
 
-            setIsLoading(true); // Renders the loading spinner whilst waiting for the API response
+    const [
+        leastSustainableBoroughsIsLoading,
+        setLeastSustainableBoroughsIsLoading,
+    ] = useState(false);
+
+    useEffect(() => {
+        const getMostSustainableBorough = async () => {
+            // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
+            // The data is then passed to a state setter for rendering on the FE
+
+            setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
             try {
                 const res = await fetch(
-                    'http://localhost:8000/get_top_stations?' +
+                    'http://localhost:8000/db/most_sustainable_borough?' +
                         new URLSearchParams({
                             start_date: startingDate,
                             end_date: endingDate,
@@ -44,33 +48,53 @@ export const Dashboard = () => {
                     { method: 'GET' }
                 );
 
+                // Explicit handling of a 200 response
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+                // console.log('(Res) most_sustainable_boroughs::', resData);
                 const resData = await res.json();
-                console.log('Response:', resData);
-
-                // Parsing data to an external function to work out the 'Most Sustainable Borough' (rides/capita)
-                setTopBorough(
-                    findTopBoroughByRidesPerCapita(
-                        resData,
-                        stationDetails,
-                        boroughPopulations
-                    ).borough
-                );
-
-                // Parsing data to an external function to work out the 8 Least Sustainable Boroughs (rides/capita)
-                setBottomBoroughs(
-                    findBottomBoroughByRidesPerCapita(
-                        resData,
-                        stationDetails,
-                        boroughPopulations
-                    )
-                );
+                if (resData?.borough) {
+                    setTopBorough(resData.borough);
+                } else {
+                    setTopBorough('No data found');
+                }
             } catch (error) {
                 console.log('Fetch error:', error);
             } finally {
-                setIsLoading(false); // Turns the loading spinner off once we have data
+                setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
             }
         };
-        getStationsByRideNumber();
+
+        const getLeastSustainableBoroughs = async () => {
+            // This API call gets the data for 'Least Sustainable Boroughs', which is handled by backend services
+            // The data is then passed to a state setter for rendering on the FE
+
+            setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
+            try {
+                const res = await fetch(
+                    'http://localhost:8000/db/least_sustainable_boroughs?' +
+                        new URLSearchParams({
+                            start_date: startingDate,
+                            end_date: endingDate,
+                        }).toString(),
+                    { method: 'GET' }
+                );
+
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+                // console.log('(Res) least_sustainable_boroughs:', resData);
+
+                const resData = await res.json();
+
+                setBottomBoroughs(resData);
+            } catch (error) {
+                console.log('Fetch error:', error);
+            } finally {
+                setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
+            }
+        };
+
+        getLeastSustainableBoroughs();
+        getMostSustainableBorough();
     }, [startingDate, endingDate]);
 
     return (
@@ -78,7 +102,7 @@ export const Dashboard = () => {
             <div className={styles.dashboardContainer}>
                 <div className={`${styles.topBorough} ${styles.widget} `}>
                     <h4>Most Sustainable Borough 🏆 (Rides / Capita)</h4>
-                    {isLoading ? ( // If we are waiting for the API response data, display the loading circle
+                    {mostSustainableBoroughIsLoading ? ( // If we are waiting for the API response data, display the loading circle
                         <LoadingSpinner />
                     ) : (
                         <p className={styles.topBoroughOutput}>{topBorough}</p>
@@ -96,7 +120,7 @@ export const Dashboard = () => {
                 </div>
                 <div className={`${styles.boroughChart} ${styles.widget}`}>
                     <h4> Least Sustainable Boroughs 📊 (Rides / Capita) </h4>
-                    {isLoading ? (
+                    {leastSustainableBoroughsIsLoading ? (
                         <LoadingSpinner />
                     ) : (
                         <BottomBoroughsGraph data={bottomBoroughs} />

@@ -127,9 +127,9 @@ def find_missing_station_ids():
     DATA FUNCTIONS
 """
 
-def get_top_stations(start_date: str, end_date: str):
+def get_ordered_stations(start_date: str, end_date: str):
     """
-    This query is designed to find the top 100 busiest bike stations in London 
+    This query is designed to return the bike stations in London 
     based on the total number of rides starting OR ending at each station, 
     during the specified date range
     """

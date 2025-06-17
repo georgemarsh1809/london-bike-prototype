@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
-from .utils import *
+from .server import *
+from .services import *
 
 app = FastAPI()
 
@@ -49,9 +50,28 @@ async def max_date():
 """
 DATA ENDPOINTS
 """
-@app.get("/get_top_stations")
+@app.get("/get_all_stations")
 async def top_stations(start_date: str = Query(...), end_date: str = Query(...)):
-    data = get_top_stations(start_date, end_date)
+    data = get_ordered_stations(start_date, end_date)
+    return data
+
+@app.get("/db/most_sustainable_borough")
+async def most_sustainable(start_date: str = Query(...), end_date: str = Query(...)):
+    ordered_stations = get_ordered_stations(start_date, end_date)
+    station_details = load_station_details()
+    borough_populations = load_borough_populations()
+
+    data = get_most_sustainable_borough(ordered_stations, station_details, borough_populations)
+
+    return data
+
+@app.get("/db/least_sustainable_boroughs")
+async def top_stations(start_date: str = Query(...), end_date: str = Query(...)):
+    ordered_stations = get_ordered_stations(start_date, end_date)
+    station_details = load_station_details()
+    borough_populations = load_borough_populations()
+
+    data = get_least_sustainable_boroughs(ordered_stations, station_details, borough_populations)
     return data
 
 @app.get("/get_stations")
