@@ -3,11 +3,41 @@ from pathlib import Path
 import math
 from collections import defaultdict
 
+"""
+--------------
+    UTILITY
+--------------
+"""
 
-def get_most_sustainable_borough(top_stations, station_details, borough_populations):
+def load_station_details():
+    file_path = Path(__file__).parent / "utils/data" / "station_details.json"
+    with file_path.open("r") as file:
+        station_details = json.load(file)
+    return station_details
+
+def load_borough_populations():
+    file_path = Path(__file__).parent / "utils/data" / "borough_populations.json"
+    with file_path.open("r") as file:
+        borough_populations = json.load(file)
+    print("read")
+    return borough_populations
+
+def load_station_coords():
+    file_path = Path(__file__).parent / "utils/data" / "station_coords.json"
+    with file_path.open("r") as file:
+        station_coords = json.load(file)
+    print("read")
+    return station_coords
+
+"""
+--------------------
+    DATA QUERIES
+--------------------
+"""
+
+def get_most_sustainable_borough(top_stations, station_details, borough_populations, ignoreCityOfLondon):
     """
     Returns the borough with the highest number of rides per capita.
-
     """
 
     # Map station_id to borough
@@ -44,18 +74,17 @@ def get_most_sustainable_borough(top_stations, station_details, borough_populati
             continue
         rides_per_capita[borough] = rides / population
 
-    # Find the borough with the highest rate
-    max_borough = None
-    max_rate = 0
-    for borough, rate in rides_per_capita.items():
-        if rate > max_rate:
-            max_rate = rate
-            max_borough = borough
+    sorted_array = sorted(
+        [{'borough': k, 'rate': v} for k, v in rides_per_capita.items()],
+        key=lambda x: x['rate'],
+        reverse=True
+    )
 
-    return {
-        "borough": max_borough,
-        "rides_per_capita": round(max_rate, 4)
-    }
+    # Ignore "City of London" if it's first and should be ignored
+    if ignoreCityOfLondon and sorted_array and sorted_array[0]['borough'] == 'City of London':
+        sorted_array.pop(0)
+
+    return sorted_array
 
 def get_least_sustainable_boroughs(top_stations, station_details, borough_populations):
     """
@@ -65,9 +94,6 @@ def get_least_sustainable_boroughs(top_stations, station_details, borough_popula
         top_stations (list): List of dicts with 'station_id' and 'total_rides'.
         station_details (list): List of dicts with 'id' and 'borough'.
         borough_populations (list): List of dicts with 'borough' and 'population_2021'.
-    
-    Returns:
-        List[dict]: Boroughs with lowest rides per capita, reversed to show 'least bad' first.
     """
 
     # Map station_id to borough
@@ -201,23 +227,3 @@ def get_boroughs_by_biggest_change(station_details, usage_data):
 
     return borough_changes[:8]
 
-
-def load_station_details():
-    file_path = Path(__file__).parent / "utils/data" / "station_details.json"
-    with file_path.open("r") as file:
-        station_details = json.load(file)
-    return station_details
-
-def load_borough_populations():
-    file_path = Path(__file__).parent / "utils/data" / "borough_populations.json"
-    with file_path.open("r") as file:
-        borough_populations = json.load(file)
-    print("read")
-    return borough_populations
-
-def load_station_coords():
-    file_path = Path(__file__).parent / "utils/data" / "station_coords.json"
-    with file_path.open("r") as file:
-        station_coords = json.load(file)
-    print("read")
-    return station_coords

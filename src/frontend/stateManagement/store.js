@@ -23,6 +23,9 @@ export const useStore = create((set) => ({
     setBiggestBoroughChangesIsLoading: (value) =>
         set({ biggestBoroughChangesIsLoading: value }),
 
+    // Other flags
+    ignoreCityOfLondon: false,
+    setIgnoreCityOfLondon: (value) => set({ ignoreCityOfLondon: value }),
     // Data
     topBorough: '',
     setTopBorough: (data) => set({ topBorough: data }),

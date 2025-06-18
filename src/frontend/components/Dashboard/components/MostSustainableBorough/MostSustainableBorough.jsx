@@ -4,16 +4,29 @@ import styles from './MostSustainableBorough.module.css';
 import { LoadingSpinner } from '../LoadingSpinner';
 
 export const MostSustainableBorough = () => {
-    const { topBorough, mostSustainableBoroughIsLoading } = useStore();
+    const {
+        topBorough,
+        mostSustainableBoroughIsLoading,
+        setIgnoreCityOfLondon,
+        ignoreCityOfLondon,
+    } = useStore();
+
+    const handleCheckboxChange = () => {
+        setIgnoreCityOfLondon(!ignoreCityOfLondon);
+    };
 
     return (
         <div className={styles.topBoroughContainer}>
             <div className={styles.header}>
                 <h4>Most Sustainable Borough 🏆 (Rides / Capita)</h4>
-                {/* <div className={styles.ignoreLondonCheckbox}>
-                    <input type="checkbox" id="checkbox" />
+                <div className={styles.ignoreLondonCheckbox}>
+                    <input
+                        type="checkbox"
+                        id="checkbox"
+                        onChange={handleCheckboxChange}
+                    />
                     <label htmlFor="checkbox"> Ignore 'City of London'</label>
-                </div> */}
+                </div>
             </div>
 
             <div className={styles.topBoroughOutput}>
@@ -21,9 +34,19 @@ export const MostSustainableBorough = () => {
                     <LoadingSpinner />
                 ) : (
                     <>
-                        <p style={{ fontWeight: 600, marginTop: '2rem' }}>
-                            {topBorough.borough}
-                        </p>
+                        {topBorough && (
+                            <>
+                                <p
+                                    style={{
+                                        fontWeight: 600,
+                                        marginTop: '2rem',
+                                    }}
+                                >
+                                    {topBorough[0]['borough']}
+                                </p>
+                            </>
+                        )}
+
                         {/* <p style={{ fontWeight: 300, marginTop: '2rem' }}>
                             {topBorough.rides_per_capita?.toFixed(1)}
                         </p> */}

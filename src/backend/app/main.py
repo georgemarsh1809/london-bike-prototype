@@ -57,12 +57,12 @@ async def top_stations(start_date: str = Query(...), end_date: str = Query(...))
     return data
 
 @app.get("/db/most_sustainable_borough")
-async def most_sustainable(start_date: str = Query(...), end_date: str = Query(...)):
+async def most_sustainable(start_date: str = Query(...), end_date: str = Query(...), ignoreCityOfLondon: bool = Query(...)):
     ordered_stations = get_ordered_stations(start_date, end_date)
     station_details = load_station_details()
     borough_populations = load_borough_populations()
 
-    data = get_most_sustainable_borough(ordered_stations, station_details, borough_populations)
+    data = get_most_sustainable_borough(ordered_stations, station_details, borough_populations, ignoreCityOfLondon)
 
     return data
 

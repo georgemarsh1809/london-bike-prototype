@@ -9,7 +9,7 @@ load_dotenv()
 client = bigquery.Client() 
 
 """
-    CONNECTION TEST 
+    CONNECTION TESTS
 """
 
 def test_hire_table():
@@ -217,8 +217,8 @@ def get_change_in_monthly_average_use_foreach_station(start_date: str, end_date:
     the parsed start date, and 45 days after. If there is an overlap, the starting period will start at the minimum start date, 
     and extend 90 days. The same logic is applied to the end date, but the inverse.
     ------
-    This was created by GPT since it's a very complicated query,
-    but I tested the query in the GCP console with various edge cases by changing the output
+    This was created by GPT since it's a very complicated query, and GPT is much better at SQL than me...
+    But I tested the query in the GCP console with various edge cases by changing the output
     to tell me what the start and end dates were for each period.
     ------
     Generating SQL queries with AI can be erroneous - edge cases can be missed.
@@ -334,7 +334,6 @@ def get_change_in_monthly_average_use_foreach_station(start_date: str, end_date:
     FULL OUTER JOIN usage_end_period e
     ON s.start_station_id = e.start_station_id
     ORDER BY station_id;
-
     """
 
     query_job = client.query(query)

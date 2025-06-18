@@ -22,6 +22,7 @@ export const Dashboard = () => {
         setEndingDate,
         setTopBorough,
         setMostSustainableBoroughIsLoading,
+        ignoreCityOfLondon,
         hotSpotsIsLoading,
         setHotSpotsIsLoading,
         leastSustainableBoroughsIsLoading,
@@ -38,17 +39,13 @@ export const Dashboard = () => {
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
 
-    // Graph and map related states - they don't like being moved into global sts
+    // Graph and map related states - they don't like being moved into global state for some reason...
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
     const [hotSpots, setHotSpots] = useState();
     const [biggestBoroughChanges, setBiggestBoroughChanges] = useState();
 
     useEffect(() => {
         setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
-        setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
-        setHotSpotsIsLoading(true);
-        setCarbonOffsetIsLoading(true);
-        setBiggestBoroughChangesIsLoading(true);
 
         const getMostSustainableBorough = async () => {
             // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
@@ -60,6 +57,7 @@ export const Dashboard = () => {
                         new URLSearchParams({
                             start_date: startingDate,
                             end_date: endingDate,
+                            ignoreCityOfLondon: ignoreCityOfLondon,
                         }).toString(),
                     { method: 'GET' }
                 );
@@ -68,22 +66,31 @@ export const Dashboard = () => {
                 if (!res.ok) throw new Error(`API Error: ${res.status}`);
 
                 const resData = await res.json();
-                // console.log('(Res) most_sustainable_boroughs::', resData);
-
-                if (resData?.borough) {
-                    setTopBorough(resData);
-                } else {
-                    setTopBorough('No data found');
-                }
+                console.log(
+                    '(Res) most_sustainable_boroughs:',
+                    resData[0]['borough']
+                );
+                setTopBorough(resData);
             } catch (error) {
                 console.log('Fetch error:', error);
+            } finally {
+                setMostSustainableBoroughIsLoading(false);
             }
         };
+
+        // This API call is in a separate useEffect since its also dependent on the state of 'ignoreCityOfLondon'
+        getMostSustainableBorough();
+    }, [startingDate, endingDate, ignoreCityOfLondon]);
+
+    useEffect(() => {
+        setLeastSustainableBoroughsIsLoading(true);
+        setHotSpotsIsLoading(true);
+        setCarbonOffsetIsLoading(true);
+        setBiggestBoroughChangesIsLoading(true);
 
         const getLeastSustainableBoroughs = async () => {
             // This API call gets the data for 'Least Sustainable Boroughs', which is handled by backend services
             // The data is then passed to a state setter for rendering on the FE
-
             try {
                 const res = await fetch(
                     'http://localhost:8000/db/least_sustainable_boroughs?' +
@@ -165,8 +172,6 @@ export const Dashboard = () => {
                 if (!res.ok) throw new Error(`API Error: ${res.status}`);
 
                 const resData = await res.json();
-                console.log(resData);
-                console.log('🚀 ~ getChangeInUsage ~ resData:', resData);
                 setBiggestBoroughChanges(resData);
             } catch (error) {
                 console.log('Fetch error:', error);
@@ -176,7 +181,6 @@ export const Dashboard = () => {
         const getAllData = async () => {
             const promises = [
                 getLeastSustainableBoroughs(),
-                getMostSustainableBorough(),
                 getHotSpots(),
                 getCO2Offset(),
                 getChangeInUsage(),
@@ -185,14 +189,13 @@ export const Dashboard = () => {
             await Promise.all(promises);
             setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
 
-            setMostSustainableBoroughIsLoading(false);
-
             setHotSpotsIsLoading(false);
 
             setCarbonOffsetIsLoading(false);
 
             setBiggestBoroughChangesIsLoading(false);
         };
+
         getAllData();
     }, [startingDate, endingDate]);
 
