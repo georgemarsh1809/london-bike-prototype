@@ -8,6 +8,7 @@ import {
     Tooltip,
     Legend,
     ResponsiveContainer,
+    Cell,
 } from 'recharts';
 
 const EllipsisTick = ({ x, y, payload }) => {
@@ -33,7 +34,7 @@ const EllipsisTick = ({ x, y, payload }) => {
     );
 };
 
-export const BottomBoroughsGraph = ({ data }) => {
+export const BoroughChangesGraph = ({ data }) => {
     return (
         <div
             style={{
@@ -58,10 +59,7 @@ export const BottomBoroughsGraph = ({ data }) => {
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="borough" tick={EllipsisTick} interval={0} />
-                    <YAxis
-                        tick={{ fill: '#222', fontSize: 12 }}
-                        tickFormatter={(value) => value.toFixed(1)}
-                    />
+                    <YAxis />
                     <Tooltip
                         formatter={(value, name) => [
                             `${value}`,
@@ -69,13 +67,25 @@ export const BottomBoroughsGraph = ({ data }) => {
                         ]}
                         labelFormatter={(label) => `Borough: ${label}`}
                     />
+
                     <Bar
-                        dataKey="rate"
-                        fill="#DA9F16"
+                        dataKey="pct_change"
+                        fill="#6fbf73"
                         barSize={'11%'}
                         radius={[4, 4, 0, 0]}
                         barBackground={{ fill: '#e0e0e0' }}
-                    />
+                    >
+                        {data?.map((entry, index) => (
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={
+                                    entry.actual_pct_change >= 0
+                                        ? '#34d399'
+                                        : '#f87171'
+                                } // green or red
+                            />
+                        ))}
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         </div>

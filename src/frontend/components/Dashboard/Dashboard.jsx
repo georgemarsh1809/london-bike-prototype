@@ -7,6 +7,7 @@ import { MostSustainableBorough } from './components/MostSustainableBorough';
 import { BottomBoroughsGraph } from './components/BottomBoroughsGraph';
 import { HotSpotsMap } from '../HotSpotsMap';
 import { CarbonOffsetCalc } from './components/CarbonOffsetCalc/CarbonOffsetCalc';
+import { BoroughChangesGraph } from './components/BoroughChangesGraph';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
 import dayjs from 'dayjs';
@@ -29,21 +30,25 @@ export const Dashboard = () => {
         setCarbonOffsetIsLoading,
         setTreeEquivalent,
         setEstimatedDistance,
+        biggestBoroughChangesIsLoading,
+        setBiggestBoroughChangesIsLoading,
     } = useStore();
 
     // Local State
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
-    const [bottomBoroughs, setBottomBoroughs] = useState([]);
 
     // Move to global state for consumption in components:
+    const [bottomBoroughs, setBottomBoroughs] = useState([]);
     const [hotSpots, setHotSpots] = useState();
+    const [biggestBoroughChanges, setBiggestBoroughChanges] = useState();
 
     useEffect(() => {
         setMostSustainableBoroughIsLoading(true); // Renders the loading spinner whilst waiting for the API response
         setLeastSustainableBoroughsIsLoading(true); // Renders the loading spinner whilst waiting for the API response
         setHotSpotsIsLoading(true);
         setCarbonOffsetIsLoading(true);
+        setBiggestBoroughChangesIsLoading(true);
 
         const getMostSustainableBorough = async () => {
             // This API call gets the data for 'Most Sustainable Borough', which is handled by backend services
@@ -90,9 +95,9 @@ export const Dashboard = () => {
                 );
 
                 if (!res.ok) throw new Error(`API Error: ${res.status}`);
-                // console.log('(Res) least_sustainable_boroughs:', resData);
 
                 const resData = await res.json();
+                console.log(resData);
 
                 setBottomBoroughs(resData);
             } catch (error) {
@@ -127,7 +132,7 @@ export const Dashboard = () => {
         const getCO2Offset = async () => {
             try {
                 const res = await fetch(
-                    'http://localhost:8000/db/get_CO2_offset?' +
+                    'http://localhost:8000/db/CO2_offset?' +
                         new URLSearchParams({
                             start_date: startingDate,
                             end_date: endingDate,
@@ -146,16 +151,39 @@ export const Dashboard = () => {
             }
         };
 
+        const getChangeInUsage = async () => {
+            try {
+                const res = await fetch(
+                    'http://localhost:8000/db/change_in_usage?' +
+                        new URLSearchParams({
+                            start_date: startingDate,
+                            end_date: endingDate,
+                        }).toString(),
+                    { method: 'GET' }
+                );
+
+                if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+                const resData = await res.json();
+                console.log(resData);
+                setBiggestBoroughChanges(resData);
+            } catch (error) {
+                console.log('Fetch error:', error);
+            }
+        };
+
         Promise.all([
             getLeastSustainableBoroughs(),
             getMostSustainableBorough(),
             getHotSpots(),
             getCO2Offset(),
+            getChangeInUsage(),
         ]).finally(() => {
             setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
-            setMostSustainableBoroughIsLoading(false); // Turns the loading spinner off once we have data
+            setMostSustainableBoroughIsLoading(false);
             setHotSpotsIsLoading(false);
             setCarbonOffsetIsLoading(false);
+            setBiggestBoroughChangesIsLoading(false);
         });
     }, [startingDate, endingDate]);
 
@@ -180,7 +208,15 @@ export const Dashboard = () => {
                     <CarbonOffsetCalc />
                 </div>
                 <div className={`${styles.usageChart} ${styles.widget}`}>
-                    <h4>Bike Usage Vs Time ⏱️</h4>
+                    {biggestBoroughChangesIsLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
+                            <h4>Change in Usage Vs Time⏱️</h4>
+
+                            <BoroughChangesGraph data={biggestBoroughChanges} />
+                        </>
+                    )}
                 </div>
                 <div className={`${styles.boroughChart} ${styles.widget}`}>
                     <h4> Least Sustainable Boroughs 📊 (Rides / Capita) </h4>

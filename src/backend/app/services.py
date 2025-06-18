@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 import math
+from collections import defaultdict
+
+
 def get_most_sustainable_borough(top_stations, station_details, borough_populations):
     """
     Returns the borough with the highest number of rides per capita.
@@ -161,6 +164,43 @@ def calculate_tree_equivalent(co2_amount):
     tree_equivalent = int(co2_amount) / ABSORPTION_RATE
 
     return math.floor(tree_equivalent)
+
+def get_boroughs_by_biggest_change(station_details, usage_data):
+    # Create a mapping of station_id to borough
+    station_id_to_borough = {station["id"]: station["borough"] for station in station_details}
+
+    # Aggregate usage per borough
+    borough_usage = defaultdict(lambda: {"starting_avg": 0, "ending_avg": 0, "count": 0})
+
+    for record in usage_data:
+        station_id = record["station_id"]
+        if station_id in station_id_to_borough:
+            borough = station_id_to_borough[station_id]
+            borough_usage[borough]["starting_avg"] += record["starting_period_avg"]
+            borough_usage[borough]["ending_avg"] += record["ending_period_avg"]
+            borough_usage[borough]["count"] += 1
+
+    # Create the list with actual and displayed percentage change
+    borough_changes = []
+    for borough, data in borough_usage.items():
+        start = max(data["starting_avg"], 1)  # Avoid division by zero
+        end = max(data["ending_avg"], 1)
+
+        pct_change = round(((end - start) / start) * 100, 2)
+
+        borough_changes.append({
+            "borough": borough,
+            "starting_avg": round(data["starting_avg"], 2),
+            "ending_avg": round(data["ending_avg"], 2),
+            "actual_pct_change": pct_change,
+            "pct_change": 100 if abs(pct_change) > 100 else pct_change
+        })
+
+    # Sort by absolute percentage change descending
+    borough_changes.sort(key=lambda x: abs(x["actual_pct_change"]), reverse=True)
+
+    return borough_changes[:8]
+
 
 def load_station_details():
     file_path = Path(__file__).parent / "utils/data" / "station_details.json"

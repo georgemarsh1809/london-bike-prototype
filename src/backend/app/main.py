@@ -84,7 +84,7 @@ async def hot_spots(start_date: str = Query(...), end_date: str = Query(...)):
     data = get_hot_spots(ordered_stations, station_details, station_coords)
     return data
 
-@app.get("/db/get_CO2_offset")
+@app.get("/db/CO2_offset")
 async def CO2_offset(start_date: str = Query(...), end_date: str = Query(...)):
     # Res from API Call:
     duration_in_seconds = get_cycling_duration(start_date, end_date)[0]["duration"]
@@ -97,7 +97,20 @@ async def CO2_offset(start_date: str = Query(...), end_date: str = Query(...)):
 
     return data
 
+@app.get("/db/change_in_usage")
+async def change_in_usage(start_date: str = Query(...), end_date: str = Query(...)):
+    data = get_change_in_monthly_average_use_foreach_station(start_date, end_date)
+    """
+        Raw data returned in the following format:
+        0: {station_id: 1, starting_period_avg: 571.67, ending_period_avg: 332.33}
+        1: {station_id: 2, starting_period_avg: 668.67, ending_period_avg: 913.33}
+        2: {station_id: 3, starting_period_avg: 1078.67, ending_period_avg: 449}
+        ...
+        Now, use a custom backend service to calculate boroughs with the biggest change in usage
+    """
+    station_details = load_station_details()    
+    boroughs = get_boroughs_by_biggest_change(station_details, data)
 
-
+    return boroughs
 
 
