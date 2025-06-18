@@ -38,7 +38,7 @@ export const Dashboard = () => {
     const [tempStartingDate, setTempStartingDate] = useState(MIN_DATE);
     const [tempEndingDate, setTempEndingDate] = useState(MAX_DATE);
 
-    // Move to global state for consumption in components:
+    // Graph and map related states - they don't like being moved into global sts
     const [bottomBoroughs, setBottomBoroughs] = useState([]);
     const [hotSpots, setHotSpots] = useState();
     const [biggestBoroughChanges, setBiggestBoroughChanges] = useState();
@@ -166,25 +166,34 @@ export const Dashboard = () => {
 
                 const resData = await res.json();
                 console.log(resData);
+                console.log('🚀 ~ getChangeInUsage ~ resData:', resData);
                 setBiggestBoroughChanges(resData);
             } catch (error) {
                 console.log('Fetch error:', error);
             }
         };
 
-        Promise.all([
-            getLeastSustainableBoroughs(),
-            getMostSustainableBorough(),
-            getHotSpots(),
-            getCO2Offset(),
-            getChangeInUsage(),
-        ]).finally(() => {
+        const getAllData = async () => {
+            const promises = [
+                getLeastSustainableBoroughs(),
+                getMostSustainableBorough(),
+                getHotSpots(),
+                getCO2Offset(),
+                getChangeInUsage(),
+            ];
+
+            await Promise.all(promises);
             setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
+
             setMostSustainableBoroughIsLoading(false);
+
             setHotSpotsIsLoading(false);
+
             setCarbonOffsetIsLoading(false);
+
             setBiggestBoroughChangesIsLoading(false);
-        });
+        };
+        getAllData();
     }, [startingDate, endingDate]);
 
     return (

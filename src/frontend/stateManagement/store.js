@@ -27,9 +27,9 @@ export const useStore = create((set) => ({
     topBorough: '',
     setTopBorough: (data) => set({ topBorough: data }),
     bottomBoroughs: [],
-    setBottomBoroughs: (data) => ({ bottomBoroughs: data }),
+    setBottomBoroughs: (data) => set({ bottomBoroughs: data }),
     hotSpots: [],
-    setHotSpots: (data) => ({ hotSpots: data }),
+    setHotSpots: (data) => set({ hotSpots: data }),
     carbonOffset: '',
     setCarbonOffset: (data) => set({ carbonOffset: data }),
     treeEquivalent: '',
@@ -37,5 +37,5 @@ export const useStore = create((set) => ({
     estimatedDistance: '',
     setEstimatedDistance: (data) => set({ estimatedDistance: data }),
     biggestBoroughChanges: [],
-    setBiggestBoroughChanges: (data) => ({ biggestBoroughChanges: data }),
+    setBiggestBoroughChanges: (data) => set({ biggestBoroughChanges: data }),
 }));
