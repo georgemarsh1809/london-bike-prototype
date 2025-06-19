@@ -7,23 +7,23 @@
 
 ### (On George's machine)
 
-nrd & uvr (from /src in the CLI), or more explicitly:
+`nrd & uvr ` (from /src in the CLI), or more explicitly:
 
 -   `npm run dev`
 -   `uvicorn backend.app.main:app --reload`
 
 ## Front End
 
-### 🔥 React + Vite
+#### 🔥 React + Vite
 
-### 🌐 Zustand
+#### 🌐 Zustand
 
-### 📊 Recharts
+#### 📊 Recharts
 
-### 🗺️ Leaflets
+#### 🗺️ Leaflets
 
 ## Back End
 
-### 🔌 FastAPI
+#### 🔌 FastAPI
 
-### 🔍 BigQuery
+#### 🔍 BigQuery
