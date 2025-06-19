@@ -231,7 +231,7 @@ export const Dashboard = () => {
                     )}
                 </div>
                 <div className={`${styles.boroughChart} ${styles.widget}`}>
-                    <h4> Least Sustainable Boroughs 📊 (Rides / Capita) </h4>
+                    <h4> Least Sustainable Boroughs 📊</h4>
                     {leastSustainableBoroughsIsLoading ? (
                         <LoadingSpinner />
                     ) : (

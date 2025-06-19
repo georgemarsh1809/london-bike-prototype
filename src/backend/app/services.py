@@ -19,14 +19,12 @@ def load_borough_populations():
     file_path = Path(__file__).parent / "utils/data" / "borough_populations.json"
     with file_path.open("r") as file:
         borough_populations = json.load(file)
-    print("read")
     return borough_populations
 
 def load_station_coords():
     file_path = Path(__file__).parent / "utils/data" / "station_coords.json"
     with file_path.open("r") as file:
         station_coords = json.load(file)
-    print("read")
     return station_coords
 
 """

@@ -18,7 +18,7 @@ export const MostSustainableBorough = () => {
     return (
         <div className={styles.topBoroughContainer}>
             <div className={styles.header}>
-                <h4>Most Sustainable Borough 🏆 (Rides / Capita)</h4>
+                <h4>Most Sustainable Borough 🏆</h4>
                 <div className={styles.ignoreLondonCheckbox}>
                     <input
                         type="checkbox"
