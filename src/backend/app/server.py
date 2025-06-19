@@ -1,8 +1,13 @@
 from google.cloud import bigquery
 from dotenv import load_dotenv
-import pandas as pd
 import json
 import os
+
+"""
+    This file creates the instance of the BigQuery connection, loads the API key from the .env file,
+        and contains the queries that are run against the database. 
+    They are then called in main.py, where the endpoints are defined.
+"""
 
 load_dotenv()
 
@@ -124,7 +129,7 @@ def find_missing_station_ids():
     return response
 
 """
-    QUERIES
+    DATA QUERIES
 """
 
 def get_ordered_stations(start_date: str, end_date: str):

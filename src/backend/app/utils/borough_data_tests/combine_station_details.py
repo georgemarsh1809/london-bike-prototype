@@ -1,5 +1,4 @@
 import json
-import os
 
 # Load the first JSON file (coordinates)
 with open('station_coords.json', 'r', encoding='utf-8') as f:
@@ -19,8 +18,8 @@ for coord in coords:
     detail = details_by_id.get(station_id, {})
     
     merged_entry = {
-        **coord,               # latitude, longitude, id
-        **{k: v for k, v in detail.items() if k != 'id'}  # name, borough without repeating id
+        **coord,               
+        **{k: v for k, v in detail.items() if k != 'id'}  
     }
     combined.append(merged_entry)
 

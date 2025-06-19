@@ -1,3 +1,5 @@
+import styles from './Dashboard.module.css';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useStore } from '../../stateManagement/store';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -5,13 +7,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { MostSustainableBorough } from './components/MostSustainableBorough';
 import { BottomBoroughsGraph } from './components/BottomBoroughsGraph';
-import { HotSpotsMap } from '../HotSpotsMap';
-import { CarbonOffsetCalc } from './components/CarbonOffsetCalc/CarbonOffsetCalc';
+import { HotSpotsMap } from './components/HotSpotsMap';
 import { BoroughChangesGraph } from './components/BoroughChangesGraph';
+import { CarbonOffsetCalc } from './components/CarbonOffsetCalc';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { MIN_DATE, MAX_DATE } from './Dashboard.constants';
-import dayjs from 'dayjs';
-import styles from './Dashboard.module.css';
 
 export const Dashboard = () => {
     // Global State
@@ -113,7 +113,7 @@ export const Dashboard = () => {
         };
 
         const getHotSpots = async () => {
-            // This API call gets the data for 'Least Sustainable Boroughs', which is handled by backend services
+            // This API call gets the data for 'Hot Spots', which is handled by backend services
             // The data is then passed to a state setter for rendering on the FE
 
             try {
@@ -137,6 +137,8 @@ export const Dashboard = () => {
         };
 
         const getCO2Offset = async () => {
+            // This API call gets the data for 'Carbon Offset Calculator', which is handled by backend services
+            // The data is then passed to a state setter for rendering on the FE
             try {
                 const res = await fetch(
                     'http://localhost:8000/db/CO2_offset?' +
@@ -159,6 +161,8 @@ export const Dashboard = () => {
         };
 
         const getChangeInUsage = async () => {
+            // This API call gets the data for the 'Change in Usage vs Time' graph, which is handled by backend services
+            // The data is then passed to a state setter for rendering on the FE
             try {
                 const res = await fetch(
                     'http://localhost:8000/db/change_in_usage?' +
@@ -187,12 +191,9 @@ export const Dashboard = () => {
             ];
 
             await Promise.all(promises);
-            setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinner off once we have data
-
+            setLeastSustainableBoroughsIsLoading(false); // Turns the loading spinners off once we have data
             setHotSpotsIsLoading(false);
-
             setCarbonOffsetIsLoading(false);
-
             setBiggestBoroughChangesIsLoading(false);
         };
 
@@ -206,11 +207,11 @@ export const Dashboard = () => {
                     <MostSustainableBorough />
                 </div>
                 <div className={`${styles.hotSpotMap} ${styles.widget}`}>
+                    <h4>Top Hot Spots 🔥</h4>
                     {hotSpotsIsLoading ? (
                         <LoadingSpinner />
                     ) : (
                         <>
-                            <h4>Top Hot Spots 🔥</h4>
                             <HotSpotsMap stations={hotSpots} />
                         </>
                     )}
@@ -220,12 +221,11 @@ export const Dashboard = () => {
                     <CarbonOffsetCalc />
                 </div>
                 <div className={`${styles.usageChart} ${styles.widget}`}>
+                    <h4>Change in Usage Vs Time ⏱️</h4>
                     {biggestBoroughChangesIsLoading ? (
                         <LoadingSpinner />
                     ) : (
                         <>
-                            <h4>Change in Usage Vs Time⏱️</h4>
-
                             <BoroughChangesGraph data={biggestBoroughChanges} />
                         </>
                     )}

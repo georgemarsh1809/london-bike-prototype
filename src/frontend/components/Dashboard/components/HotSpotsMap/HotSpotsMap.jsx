@@ -1,22 +1,5 @@
-import React from 'react';
-
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
-import L from 'leaflet';
+import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-
-// Fix Leaflet's default marker icon issue with Vite/React
-// - Works without so seems unnecessary...
-// delete L.Icon.Default.prototype._getIconUrl;
-// L.Icon.Default.mergeOptions({
-//     iconRetinaUrl: new URL(
-//         'leaflet/dist/images/marker-icon-2x.png',
-//         import.meta.url
-//     ).href,
-//     iconUrl: new URL('leaflet/dist/images/marker-icon.png', import.meta.url)
-//         .href,
-//     shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url)
-//         .href,
-// });
 
 export const HotSpotsMap = ({ stations }) => {
     const londonCentre = [51.5074, -0.1278]; // Central London fallback
@@ -37,11 +20,9 @@ export const HotSpotsMap = ({ stations }) => {
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org">OpenStreetMap</a>'
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png
-
-
-"
+                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                 />
+
                 {stations?.map((station, index) => (
                     <Marker
                         key={index}

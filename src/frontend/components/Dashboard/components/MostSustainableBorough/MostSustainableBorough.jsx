@@ -46,10 +46,6 @@ export const MostSustainableBorough = () => {
                                 </p>
                             </>
                         )}
-
-                        {/* <p style={{ fontWeight: 300, marginTop: '2rem' }}>
-                            {topBorough.rides_per_capita?.toFixed(1)}
-                        </p> */}
                     </>
                 )}
             </div>

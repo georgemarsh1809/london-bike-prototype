@@ -15,7 +15,7 @@
 
 html {
     /* These 2 lines ensure scrollbar is hidden, 
-  but user can still scroll */
+    but user can still scroll */
     scrollbar-width: none;
     -ms-overflow-style: none;
 }

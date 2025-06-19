@@ -1,12 +1,10 @@
 import {
     BarChart,
     Bar,
-    Rectangle,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
     ResponsiveContainer,
     Cell,
 } from 'recharts';
@@ -67,7 +65,6 @@ export const BoroughChangesGraph = ({ data }) => {
                         ]}
                         labelFormatter={(label) => `Borough: ${label}`}
                     />
-
                     <Bar
                         dataKey="pct_change"
                         fill="#6fbf73"

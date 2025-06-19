@@ -15,8 +15,6 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
-# Define the endpoints, and the queries (functions) that are run when they're hit
-
 """
 The following end points are for testing purposes only
 """
